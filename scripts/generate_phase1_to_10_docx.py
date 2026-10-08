@@ -20,12 +20,31 @@ def create_document():
         section.left_margin = Inches(1.0)
         section.right_margin = Inches(1.0)
 
+    # Professional Academic Cybersecurity Color Palette
+    # Primary Headings & Main Title: Dark Navy #0B1F3A
+    COLOR_NAVY = RGBColor(11, 31, 58)
+    HEX_NAVY = "0B1F3A"
+    
+    # University, Department & Section Headings: Dark Blue #17365D
+    COLOR_DARK_BLUE = RGBColor(23, 54, 93)
+    HEX_DARK_BLUE = "17365D"
+    
+    # Body Text: Near-Black #222222 (high contrast against white)
+    COLOR_BODY = RGBColor(34, 34, 34)
+    
+    # Accent Elements: Medium Blue #1976D2
+    COLOR_ACCENT = RGBColor(25, 118, 210)
+    HEX_ACCENT = "1976D2"
+    
+    # Header & Footer Text: Muted Dark Neutral #444444
+    COLOR_MUTED_DARK = RGBColor(68, 68, 68)
+
     # Styles Setup
     styles = doc.styles
     normal_style = styles['Normal']
     normal_style.font.name = 'Calibri'
     normal_style.font.size = Pt(10.5)
-    normal_style.font.color.rgb = RGBColor(30, 41, 59) # Slate 800
+    normal_style.font.color.rgb = COLOR_BODY
     normal_style.paragraph_format.line_spacing = 1.15
     normal_style.paragraph_format.space_after = Pt(4)
 
@@ -47,7 +66,7 @@ def create_document():
         ''')
         tcPr.append(tcMar)
 
-    def set_table_borders(table, color="CBD5E1", sz="4"):
+    def set_table_borders(table, color="B0BEC5", sz="4"):
         tblPr = table._tbl.tblPr
         borders = parse_xml(f'''
             <w:tblBorders {nsdecls("w")}>
@@ -63,14 +82,14 @@ def create_document():
 
     def add_h1(text):
         p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(18)
+        p.paragraph_format.space_before = Pt(20)
         p.paragraph_format.space_after = Pt(8)
         p.paragraph_format.keep_with_next = True
         run = p.add_run(text)
         run.font.name = 'Calibri'
-        run.font.size = Pt(18)
+        run.font.size = Pt(17)
         run.font.bold = True
-        run.font.color.rgb = RGBColor(15, 23, 42) # Slate 900
+        run.font.color.rgb = COLOR_NAVY
         return p
 
     def add_h2(text):
@@ -80,9 +99,9 @@ def create_document():
         p.paragraph_format.keep_with_next = True
         run = p.add_run(text)
         run.font.name = 'Calibri'
-        run.font.size = Pt(13.5)
+        run.font.size = Pt(13)
         run.font.bold = True
-        run.font.color.rgb = RGBColor(2, 132, 199) # Sky 600
+        run.font.color.rgb = COLOR_DARK_BLUE
         return p
 
     def add_h3(text):
@@ -94,7 +113,7 @@ def create_document():
         run.font.name = 'Calibri'
         run.font.size = Pt(11)
         run.font.bold = True
-        run.font.color.rgb = RGBColor(51, 65, 85) # Slate 700
+        run.font.color.rgb = COLOR_DARK_BLUE
         return p
 
     def add_p(text, bold_prefix=None):
@@ -106,11 +125,11 @@ def create_document():
             r_pre.font.name = 'Calibri'
             r_pre.font.size = Pt(10)
             r_pre.font.bold = True
-            r_pre.font.color.rgb = RGBColor(15, 23, 42)
+            r_pre.font.color.rgb = COLOR_NAVY
         r_text = p.add_run(text)
         r_text.font.name = 'Calibri'
         r_text.font.size = Pt(10)
-        r_text.font.color.rgb = RGBColor(30, 41, 59)
+        r_text.font.color.rgb = COLOR_BODY
         return p
 
     def add_bullet(text, bold_prefix=None):
@@ -122,19 +141,19 @@ def create_document():
             r_pre.font.name = 'Calibri'
             r_pre.font.size = Pt(10)
             r_pre.font.bold = True
-            r_pre.font.color.rgb = RGBColor(15, 23, 42)
+            r_pre.font.color.rgb = COLOR_NAVY
         r_text = p.add_run(text)
         r_text.font.name = 'Calibri'
         r_text.font.size = Pt(10)
-        r_text.font.color.rgb = RGBColor(30, 41, 59)
+        r_text.font.color.rgb = COLOR_BODY
         return p
 
     def add_code_block(text):
         tbl = doc.add_table(rows=1, cols=1)
         tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
         cell = tbl.cell(0, 0)
-        set_cell_background(cell, "0F172A")
-        set_cell_margins(cell, top=100, bottom=100, left=150, right=150)
+        set_cell_background(cell, "0B1F3A") # Dark Navy terminal box
+        set_cell_margins(cell, top=110, bottom=110, left=150, right=150)
         p = cell.paragraphs[0]
         p.paragraph_format.space_before = Pt(0)
         p.paragraph_format.space_after = Pt(0)
@@ -142,42 +161,42 @@ def create_document():
         r = p.add_run(text)
         r.font.name = 'Consolas'
         r.font.size = Pt(8.5)
-        r.font.color.rgb = RGBColor(241, 245, 249) # Slate 100
+        r.font.color.rgb = RGBColor(255, 255, 255) # Crisp White
         doc.add_paragraph() # Spacing
 
     def add_table_data(col_widths, headers, rows_data):
         table = doc.add_table(rows=1, cols=len(headers))
         table.alignment = WD_TABLE_ALIGNMENT.CENTER
-        set_table_borders(table)
+        set_table_borders(table, color="B0BEC5", sz="4")
         
         # Header row
         hdr_cells = table.rows[0].cells
         for i, title in enumerate(headers):
             hdr_cells[i].text = title
-            set_cell_background(hdr_cells[i], "0F172A")
-            set_cell_margins(hdr_cells[i], top=100, bottom=100, left=120, right=120)
+            set_cell_background(hdr_cells[i], HEX_NAVY)
+            set_cell_margins(hdr_cells[i], top=110, bottom=110, left=120, right=120)
             p = hdr_cells[i].paragraphs[0]
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             for run in p.runs:
                 run.font.name = "Calibri"
                 run.font.size = Pt(9)
                 run.font.bold = True
-                run.font.color.rgb = RGBColor(255, 255, 255)
+                run.font.color.rgb = RGBColor(255, 255, 255) # Pure White
                 
         # Data rows
         for r_idx, row_values in enumerate(rows_data):
             row_cells = table.add_row().cells
-            bg_color = "F8FAFC" if r_idx % 2 == 1 else "FFFFFF"
+            bg_color = "F4F6F9" if r_idx % 2 == 1 else "FFFFFF"
             for c_idx, val in enumerate(row_values):
                 row_cells[c_idx].text = str(val)
                 set_cell_background(row_cells[c_idx], bg_color)
-                set_cell_margins(row_cells[c_idx], top=80, bottom=80, left=120, right=120)
+                set_cell_margins(row_cells[c_idx], top=85, bottom=85, left=120, right=120)
                 p = row_cells[c_idx].paragraphs[0]
                 p.alignment = WD_ALIGN_PARAGRAPH.LEFT
                 for run in p.runs:
                     run.font.name = "Calibri"
                     run.font.size = Pt(8.5)
-                    run.font.color.rgb = RGBColor(30, 41, 59)
+                    run.font.color.rgb = COLOR_BODY # Near-Black #222222
                     
         for row in table.rows:
             for idx, width in enumerate(col_widths):
@@ -194,10 +213,10 @@ def create_document():
         tcPr = cell._tc.get_or_add_tcPr()
         borders = parse_xml(f'''
             <w:tcBorders {nsdecls("w")}>
-                <w:top w:val="single" w:sz="6" w:space="0" w:color="0284C7"/>
-                <w:left w:val="single" w:sz="24" w:space="0" w:color="0284C7"/>
-                <w:bottom w:val="single" w:sz="6" w:space="0" w:color="0284C7"/>
-                <w:right w:val="single" w:sz="6" w:space="0" w:color="0284C7"/>
+                <w:top w:val="single" w:sz="6" w:space="0" w:color="B0BEC5"/>
+                <w:left w:val="single" w:sz="24" w:space="0" w:color="{HEX_DARK_BLUE}"/>
+                <w:bottom w:val="single" w:sz="6" w:space="0" w:color="B0BEC5"/>
+                <w:right w:val="single" w:sz="6" w:space="0" w:color="B0BEC5"/>
             </w:tcBorders>
         ''')
         tcPr.append(borders)
@@ -209,72 +228,86 @@ def create_document():
         r1.font.name = "Calibri"
         r1.font.size = Pt(9.5)
         r1.font.bold = True
-        r1.font.color.rgb = RGBColor(2, 132, 199)
+        r1.font.color.rgb = COLOR_NAVY
         
         r2 = p.add_run(f"{subtitle}\n")
         r2.font.name = "Calibri"
         r2.font.size = Pt(8.5)
         r2.font.italic = True
-        r2.font.color.rgb = RGBColor(71, 85, 105)
+        r2.font.color.rgb = COLOR_BODY
         
         if prompt_ref:
             r3 = p.add_run(f"Eraser AI Generation Prompt: See evidence/DIAGRAM_GENERATION_PROMPTS.md ({prompt_ref})")
             r3.font.name = "Calibri"
             r3.font.size = Pt(8)
-            r3.font.color.rgb = RGBColor(100, 116, 139)
+            r3.font.bold = True
+            r3.font.color.rgb = COLOR_DARK_BLUE
             
         doc.add_paragraph() # spacing
 
     # ==========================================
-    # 1. COVER PAGE
+    # 1. COVER PAGE (HIGH CONTRAST ACADEMIC THEME)
     # ==========================================
     title_p = doc.add_paragraph()
-    title_p.paragraph_format.space_before = Pt(80)
-    title_p.paragraph_format.space_after = Pt(8)
+    title_p.paragraph_format.space_before = Pt(60)
+    title_p.paragraph_format.space_after = Pt(6)
     title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r_title = title_p.add_run("AMRITA VISHWA VIDYAPEETHAM\nDEPARTMENT OF CYBER SECURITY")
     r_title.font.name = 'Calibri'
     r_title.font.size = Pt(13)
     r_title.font.bold = True
-    r_title.font.color.rgb = RGBColor(71, 85, 105)
+    r_title.font.color.rgb = COLOR_DARK_BLUE
+
+    # University decorative horizontal accent rule
+    rule_table = doc.add_table(rows=1, cols=1)
+    rule_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    rule_cell = rule_table.cell(0, 0)
+    rule_cell.width = Inches(4.5)
+    set_cell_background(rule_cell, HEX_DARK_BLUE)
+    set_cell_margins(rule_cell, top=15, bottom=15, left=0, right=0)
+    p_empty = rule_cell.paragraphs[0]
+    p_empty.paragraph_format.space_before = Pt(0)
+    p_empty.paragraph_format.space_after = Pt(0)
+    r_sp = p_empty.add_run("")
+    r_sp.font.size = Pt(1)
 
     sub_p = doc.add_paragraph()
-    sub_p.paragraph_format.space_before = Pt(24)
+    sub_p.paragraph_format.space_before = Pt(28)
     sub_p.paragraph_format.space_after = Pt(12)
     sub_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r_main = sub_p.add_run("CYBER THREAT INTELLIGENCE (CTI)\nSHARING PLATFORM")
     r_main.font.name = 'Calibri'
-    r_main.font.size = Pt(26)
+    r_main.font.size = Pt(25)
     r_main.font.bold = True
-    r_main.font.color.rgb = RGBColor(15, 23, 42)
+    r_main.font.color.rgb = COLOR_NAVY
 
     course_p = doc.add_paragraph()
-    course_p.paragraph_format.space_after = Pt(40)
+    course_p.paragraph_format.space_after = Pt(36)
     course_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r_course = course_p.add_run("24CYS401 – Secure Software Engineering\nEnd-Semester Laboratory Examination Project\nAssigned Topic: Topic 29\nInterim Academic Report (Phases 1 – 10)")
     r_course.font.name = 'Calibri'
-    r_course.font.size = Pt(12)
-    r_course.font.italic = True
-    r_course.font.color.rgb = RGBColor(2, 132, 199)
+    r_course.font.size = Pt(11.5)
+    r_course.font.bold = True
+    r_course.font.color.rgb = COLOR_DARK_BLUE
 
     student_p = doc.add_paragraph()
-    student_p.paragraph_format.space_before = Pt(100)
+    student_p.paragraph_format.space_before = Pt(90)
     student_p.paragraph_format.space_after = Pt(4)
     student_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r_name = student_p.add_run("Submitted by:\n")
     r_name.font.size = Pt(11)
-    r_name.font.color.rgb = RGBColor(100, 116, 139)
+    r_name.font.color.rgb = COLOR_BODY
     r_name2 = student_p.add_run("ABISHEK SINGH P\n")
-    r_name2.font.size = Pt(14)
+    r_name2.font.size = Pt(16)
     r_name2.font.bold = True
-    r_name2.font.color.rgb = RGBColor(15, 23, 42)
+    r_name2.font.color.rgb = COLOR_NAVY
     r_name3 = student_p.add_run("B.Tech Computer Science Engineering – Cyber Security\nAmrita School of Engineering, Chennai Campus\nDate of Submission: October 2026")
     r_name3.font.size = Pt(11)
-    r_name3.font.color.rgb = RGBColor(71, 85, 105)
+    r_name3.font.color.rgb = COLOR_BODY
 
     doc.add_page_break()
 
-    # Configure Header / Footer for subsequent sections
+    # Configure Header / Footer for subsequent sections (High contrast dark neutral #444444)
     header_footer_section = doc.sections[0]
     # Header
     hp = header_footer_section.header.paragraphs[0]
@@ -282,14 +315,16 @@ def create_document():
     hrun = hp.add_run("Secure Software Engineering – CTI Sharing Platform | Topic 29")
     hrun.font.name = "Calibri"
     hrun.font.size = Pt(8.5)
-    hrun.font.color.rgb = RGBColor(100, 116, 139)
+    hrun.font.bold = True
+    hrun.font.color.rgb = COLOR_MUTED_DARK
     # Footer
     fp = header_footer_section.footer.paragraphs[0]
     fp.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     frun = fp.add_run("Abishek Singh P | 24CYS401\t\tInterim Report (Phases 1–10)")
     frun.font.name = "Calibri"
     frun.font.size = Pt(8.5)
-    frun.font.color.rgb = RGBColor(100, 116, 139)
+    frun.font.bold = True
+    frun.font.color.rgb = COLOR_MUTED_DARK
 
     # ==========================================
     # 2. TABLE OF CONTENTS
@@ -316,13 +351,14 @@ def create_document():
         r1 = p.add_run(title)
         r1.font.bold = True
         r1.font.size = Pt(10)
+        r1.font.color.rgb = COLOR_NAVY
         # Dot leader
         dots = " ." * int((72 - len(title)) / 2)
         r_dots = p.add_run(f" {dots} ")
         r_dots.font.color.rgb = RGBColor(148, 163, 184)
         r2 = p.add_run(pg)
         r2.font.bold = True
-        r2.font.color.rgb = RGBColor(2, 132, 199)
+        r2.font.color.rgb = COLOR_ACCENT
 
     doc.add_page_break()
 
@@ -821,10 +857,20 @@ def create_document():
     add_table_data([Inches(0.6), Inches(0.7), Inches(0.5), Inches(0.6), Inches(0.5), Inches(0.4), Inches(0.7), Inches(0.7), Inches(1.1), Inches(0.8)], p12_matrix[0], p12_matrix[1:])
 
     # Save Document
-    output_filename = "CTI_Sharing_Platform_Phase_01_to_10.docx"
-    doc.save(output_filename)
-    print(f"Successfully generated: {output_filename}")
-    print(f"File size: {os.path.getsize(output_filename)} bytes")
+    primary_filename = "CTI_Sharing_Platform_Phase_01_to_10.docx"
+    updated_filename = "CTI_Sharing_Platform_Phase_01_to_10_Updated.docx"
+    
+    # Save the updated high-contrast version
+    doc.save(updated_filename)
+    print(f"Successfully generated updated high-contrast document: {updated_filename} ({os.path.getsize(updated_filename)} bytes)")
+
+    try:
+        doc.save(primary_filename)
+        print(f"Successfully updated primary document: {primary_filename} ({os.path.getsize(primary_filename)} bytes)")
+    except PermissionError:
+        print(f"Notice: '{primary_filename}' is currently held open in Microsoft Word by the user.")
+        print(f"The new high-contrast document with Dark Navy (#0B1F3A) and Dark Blue (#17365D) theme is saved and ready at:")
+        print(f"  -> {os.path.abspath(updated_filename)}")
 
 if __name__ == '__main__':
     create_document()

@@ -21,6 +21,10 @@ logs/
 *.log
 npm-debug.log*
 
+# Python cache
+__pycache__/
+*.pyc
+
 # OS metadata
 .DS_Store
 Thumbs.db
@@ -28,4 +32,5 @@ Thumbs.db
 # Exam source documents
 *.docx
 !CTI_Sharing_Platform_Phase_01_to_10.docx
+!CTI_Sharing_Platform_Phase_01_to_10_Updated.docx
 question.jpeg
