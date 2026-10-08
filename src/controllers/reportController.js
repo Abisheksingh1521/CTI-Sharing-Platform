@@ -10,7 +10,8 @@ class ReportController {
    * Submit a new Threat Incident Report
    */
   static async submitReport(req, res) {
-    const { title, summary, contentMarkdown, tlp = 'AMBER' } = req.body;
+    const { title, summary, tlp = 'AMBER' } = req.body;
+    const contentMarkdown = req.body.contentMarkdown || req.body.content_markdown;
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
 
     if (!title || !summary || !contentMarkdown) {
