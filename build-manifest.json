@@ -1,13 +1,29 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-08T09:01:12.023Z",
-  "gitCommit": "49c395eecf1563759ab7350dea83b135c5ba7acc",
-  "totalFiles": 38,
-  "overallRootHash": "87d9568d793e556e4fc87d5bb261516893f97ac3797b00c9d5e4ad59162793a0",
+  "generatedAt": "2026-10-08T09:10:00.370Z",
+  "gitCommit": "68690b4609dbe5cf50b7febe6636655f022c34f7",
+  "totalFiles": 43,
+  "overallRootHash": "e2fdda2ff5304b55b99ab708ac8a8da7c9ec3b4188a5c792b3e99b17816a9a45",
   "artifacts": {
     ".env.example": {
       "sha256": "f30d6fa6e8a3f4a7f46a7afa74b7abde473dd134074d5bd891ea4dd83fd53a42",
       "sizeBytes": 402
+    },
+    "k8s/configmap.yaml": {
+      "sha256": "d66c8bf93ddc3cf39964e2fdae150d68126818f6b5d0476361efb4a2b19ae658",
+      "sizeBytes": 415
+    },
+    "k8s/deployment.yaml": {
+      "sha256": "ab794392aecfdcd024e922b97f0da272bf768bb454930a77e98d08215bcf0b0c",
+      "sizeBytes": 2732
+    },
+    "k8s/secret.yaml": {
+      "sha256": "86ac3662256748dd9da6909042c2996c86d900b3fac6d42f54e85a2c96faa5d3",
+      "sizeBytes": 406
+    },
+    "k8s/service.yaml": {
+      "sha256": "b7b30481de885cd9a09dafe8e5f0a3f4cfccd5814e774443e4731a95d9298c8f",
+      "sizeBytes": 325
     },
     "package-lock.json": {
       "sha256": "2dd41c1d80e4fa29ea8fa4c656aef9a0d47bb676d698227be03198a455083e5d",
@@ -44,6 +60,10 @@
     "scripts/generate_phase12_docx.py": {
       "sha256": "f4f69d9eef3aa89168469a5cadc4b5f30f8fdb31e4eebcf7945a89489d7d1af2",
       "sizeBytes": 21440
+    },
+    "scripts/generate_phase13_docx.py": {
+      "sha256": "04f08ee191246a841ea9e8c56914d5d01107565c91014b6b36d7b60a52e9a363",
+      "sizeBytes": 16773
     },
     "scripts/generate_phase1_to_10_docx.py": {
       "sha256": "f7d05b33bbe24d4c7d17a948d086aacd3af1ed24f70c75ee9318351cc04c1698",

@@ -1,0 +1,52 @@
+# ==============================================================================
+# Phase 13: Docker Ignore Configuration
+# Standards: Prevent credential leakage, local database caching & bloat
+# ==============================================================================
+
+# Version Control
+.git/
+.gitignore
+.githooks/
+.github/
+
+# Sensitive Environment Configurations & Secrets
+.env
+.env.*
+*.pem
+*.key
+*.cert
+
+# Local Database & Volatile Runtime State
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+threat_intel.db
+
+# Host Dependencies & Node Modules
+node_modules/
+npm-debug.log*
+
+# Documentation, Evidence & Office Documents
+docs/
+evidence/
+*.docx
+*.jpeg
+*.png
+*.jpg
+IMAGE/
+
+# Python Cache & Utility Scripts
+__pycache__/
+*.pyc
+scripts/*.py
+scripts/*.ps1
+
+# Test Suites (Production image only packages runtime components)
+tests/
+
+# Operating System Files
+.DS_Store
+Thumbs.db

@@ -69,5 +69,24 @@ The table below connects the Phase 11 secure development controls to governance 
 | **`CTRL-11-06`** | **Reproducible Build Manifest** | SLSA Level 2 / NIST SP 800-218 PW.8 | `scripts/generate-build-manifest.js` | `node scripts/generate-build-manifest.js` | Section 7 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
 | **`CTRL-11-07`** | **Continuous Integration Pipeline** | NIST SP 800-218 PW.6 / GitHub CI | `scripts/ci-runner.js` & `.github/workflows/`| `npm run ci` | Section 8 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
 
+---
+
+## 5. Phase 13: Containerization & Kubernetes Deployment Controls Traceability
+
+The table below connects the Phase 13 containerization and orchestration controls to governance standards, specifications, and verifiable evidence:
+
+| Control ID | Control Name | Governance Standard | Implementation Manifest / File | Verification Target | Evidence Reference |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **`CTRL-13-01`** | **Non-Root Container User** | CIS Docker Benchmark 4.1 | `Dockerfile` (`USER 10001:10001`) | Unprivileged UID/GID 10001 | Section 2 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-02`** | **Multi-Stage Build Minimization** | NIST SP 800-190 Section 4.1 | `Dockerfile` (builder vs runtime) | Excludes devDependencies & cache | Section 2 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-03`** | **Zero Baked Credentials** | CIS Docker Benchmark 4.2 | `.dockerignore` | Excludes `.env`, `*.db`, `*.key` | Section 2 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-04`** | **Read-Only Root Filesystem** | NSA/CISA Kubernetes Guide | `k8s/deployment.yaml` | `readOnlyRootFilesystem: true` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-05`** | **Dropped Linux Capabilities** | CIS Docker Benchmark 5.2 | `k8s/deployment.yaml` | `capabilities: drop: ["ALL"]` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-06`** | **SQLite Single-Replica Governance** | SQLite Architecture Standard | `k8s/deployment.yaml` | `replicas: 1`, `strategy: Recreate` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-07`** | **Dedicated Writable Volume** | POSIX / SQLite WAL Standard | `k8s/deployment.yaml` | Writable `/data` mount | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-08`** | **Resource Quotas & DoS Defense** | Kubernetes Best Practices | `k8s/deployment.yaml` | CPU/Mem requests & limits | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+| **`CTRL-13-09`** | **Liveness & Readiness Probes** | NIST SP 800-190 Section 4.3 | `k8s/deployment.yaml` | `/api/health` probes | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+
+
 
 

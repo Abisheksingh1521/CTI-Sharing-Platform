@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cti-platform-deployment
+  namespace: default
+  labels:
+    app.kubernetes.io/name: cti-platform
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  # IMPORTANT SQLITE CONSTRAINT:
+  # Exactly ONE replica enforced to prevent concurrent SQLite WAL write-lock collisions
+  # across distributed pod filesystems without a shared distributed lock manager.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: cti-platform
+  template:
+    metadata:
+      labels:
+        app: cti-platform
+        app.kubernetes.io/name: cti-platform
+    spec:
+      # Pod-Level Security Context (Non-root user UID 10001)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: cti-platform
+          image: cti-platform:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+
+          # Container-Level Security Context
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          # Resource Governance & DoS Prevention
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          # Environment Injection from ConfigMap & Secret
+          envFrom:
+            - configMapRef:
+                name: cti-platform-config
+            - secretRef:
+                name: cti-platform-secrets
+
+          # Volume Mounts: Provides writable paths on readOnlyRootFilesystem for SQLite WAL
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+            - name: tmp-volume
+              mountPath: /tmp
+
+          # Liveness & Readiness Health Probes
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2
+
+      # Dedicated Volumes: Writable storage for SQLite and temporary files
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+        - name: tmp-volume
+          emptyDir: {}
