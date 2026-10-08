@@ -70,9 +70,10 @@ The platform is designed using a **Layered Hexagonal / Clean Architecture** patt
 
 ## 3. Mapping Core Modules to Components
 
-| Core Exam Requirement | Software Architecture Component | Implementation File | Key Interfaces & Responsibilities |
+| Core CTI Capability | Software Architecture Component | Implementation File | Key Interfaces & Responsibilities |
 | :--- | :--- | :--- | :--- |
 | **Authentication & Identity** | `AuthController` + `totpService` | `src/controllers/authController.js`<br>`src/services/totpService.js` | User onboarding, salted bcrypt hashing (cost factor 10), RFC 6238 TOTP issuance and drift-tolerant verification, JWT signing. |
-| **Examination / Submission (Ingestion)** | `IoCController` + `ReportController` | `src/controllers/iocController.js`<br>`src/controllers/reportController.js` | Ingests raw observables and markdown incident reports; invokes validation strategies; computes defanged values. |
-| **Evaluation / Results (Triage & Classification)** | `TriageController` + `TLPPolicy` | `src/controllers/triageController.js`<br>`src/middleware/tlpGuard.js` | Evaluates pending indicators, records analyst justifications, assigns MITRE ATT&CK techniques, enforces `canAccessTLP`. |
-| **Audit & Logging** | `AuditService` | `src/services/auditService.js` | Manages the Tamper-Evident SHA-256 Hash-Chained Audit Log, calculates continuous hashes, and detects retroactive database tampering. |
+| **Intelligence Ingestion & Validation** | `IoCController` + `ReportController` | `src/controllers/iocController.js`<br>`src/controllers/reportController.js` | Ingests raw observables and markdown incident reports; invokes validation strategies; computes defanged values. |
+| **Triage & Classification** | `TriageController` + `TLPPolicy` | `src/controllers/triageController.js`<br>`src/middleware/tlpGuard.js` | Evaluates pending indicators, records analyst justifications, assigns MITRE ATT&CK techniques, enforces `canAccessTLP`. |
+| **Feed Distribution** | `FeedController` + `stixFactory` | `src/controllers/feedController.js`<br>`src/services/stixFactory.js` | Generates standardized STIX 2.1 JSON observable bundles with TLP egress filtering. |
+| **Audit & Monitoring** | `AuditService` | `src/services/auditService.js` | Manages the Tamper-Evident SHA-256 Hash-Chained Audit Log, calculates continuous hashes, and detects retroactive database tampering. |

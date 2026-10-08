@@ -12,7 +12,7 @@ The following matrix documents the unbroken chain of continuity connecting requi
 | Stage | Artifact Level | Traceable Element ID | Concrete Description & Specification in CTI Platform |
 | :---: | :--- | :--- | :--- |
 | **1** | **Requirement** | `REQ-SEC-04` | **Traffic Light Protocol (TLP) Enforcement:** The platform must restrict access to threat indicators and incident reports based on TLP rating (CLEAR, GREEN, AMBER, RED) and user organization provenance. |
-| **2** | **Use Case** | `UC-03` | **Classify & Share Threat Intelligence:** Authorized Analyst reviews raw indicators and applies appropriate TLP rating, while the system enforces information barriers during feed distribution. |
+| **2** | **Use Case** | `UC-02` | **Review & Classify Threat Intelligence with TLP:** Authorized Analyst reviews raw indicators and applies appropriate TLP rating, while the system enforces information barriers during feed distribution. |
 | **3** | **DFD Model** | `Process 3.0` | **TLP Access Control & Egress Barrier:** Data flow interceptor between `D2: Threat Store` and `E4: Threat Consumer` evaluating user clearance before transmitting intelligence records. |
 | **4** | **STRIDE Threat** | `T04 (Information Disclosure)` | **Unauthorized Egress of TLP:RED Intelligence:** An unvetted consumer or external adversary queries the feed API to exfiltrate sensitive organizational attribution and incident data. |
 | **5** | **Vulnerability** | `VULN-03` | **Broken Object-Level & TLP Authorization (IDOR):** Endpoints querying indicators or reports lack explicit validation of user clearance against resource TLP level. |
@@ -29,9 +29,9 @@ The following matrix documents the unbroken chain of continuity connecting requi
 
 | Requirement ID | Domain | Use Case | DFD Process | STRIDE ID | Vulnerability ID | User Story ID | Code Module | Test Suite |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `REQ-SEC-01` | Auth & MFA | `UC-01` | `Process 1.0` | `T01 (Spoofing)` | `VULN-06` | `CTI-101` | `src/controllers/authController.js` | `tests/unit/auth.test.js` |
+| `REQ-SEC-01` | Auth & MFA | `UC-05` | `Process 1.0` | `T01 (Spoofing)` | `VULN-06` | `CTI-101` | `src/controllers/authController.js` | `tests/unit/auth.test.js` |
 | `REQ-SEC-02` | RBAC Access | `UC-02` | `Process 1.1` | `T10 (Elevation)`| `VULN-02` | `CTI-102` | `src/middleware/rbacGuard.js` | `tests/integration/rbac.test.js` |
-| `REQ-SEC-03` | Input Defanging| `UC-04` | `Process 2.0` | `T08 (Tampering)`| `VULN-01` | `CTI-104` | `src/services/iocValidator.js` | `tests/unit/validator.test.js` |
-| `REQ-SEC-04` | TLP Barrier | `UC-03` | `Process 3.0` | `T04 (Disclosure)`| `VULN-03` | `CTI-107` | `src/middleware/tlpGuard.js` | `tests/integration/tlpAccess.test.js` |
-| `REQ-SEC-05` | Audit Integrity| `UC-05` | `Process 4.0` | `T03 (Repudiation)`| `VULN-04`| `CTI-109` | `src/services/auditService.js` | `tests/unit/auditChain.test.js` |
-| `REQ-SEC-06` | DoS Resistance | `UC-04` | `Process 2.1` | `T09 (DoS)` | `VULN-01` | `CTI-104` | `src/middleware/rateLimiter.js` | `tests/fuzz/iocFuzzer.js` |
+| `REQ-SEC-03` | Input Defanging| `UC-01` | `Process 2.0` | `T08 (Tampering)`| `VULN-01` | `CTI-104` | `src/services/iocValidator.js` | `tests/unit/validator.test.js` |
+| `REQ-SEC-04` | TLP Barrier | `UC-02` | `Process 3.0` | `T04 (Disclosure)`| `VULN-03` | `CTI-107` | `src/middleware/tlpGuard.js` | `tests/integration/tlpAccess.test.js` |
+| `REQ-SEC-05` | Audit Integrity| `UC-04` | `Process 4.0` | `T03 (Repudiation)`| `VULN-04`| `CTI-109` | `src/services/auditService.js` | `tests/unit/auditChain.test.js` |
+| `REQ-SEC-06` | DoS Resistance | `UC-01` | `Process 2.1` | `T09 (DoS)` | `VULN-01` | `CTI-104` | `src/middleware/rateLimiter.js` | `tests/fuzz/iocFuzzer.js` |

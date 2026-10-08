@@ -5,7 +5,7 @@ const GENESIS_HASH = '0000000000000000000000000000000000000000000000000000000000
 
 /**
  * Tamper-Evident SHA-256 Hash-Chained Audit Service
- * Maintains an append-only verifiable cryptographic log for non-repudiation and audit integrity.
+ * The hash chain provides tamper-evident integrity verification of audit records.
  */
 class AuditService {
   /**
