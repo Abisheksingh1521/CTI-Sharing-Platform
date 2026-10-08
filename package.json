@@ -10,6 +10,7 @@
     "test": "node --test --test-concurrency=1 tests/unit/*.test.js tests/integration/*.test.js",
     "test:unit": "node --test --test-concurrency=1 tests/unit/*.test.js",
     "test:integration": "node --test --test-concurrency=1 tests/integration/*.test.js",
+    "test:vuln": "node --test --test-concurrency=1 tests/vulnerability/*.test.js",
     "test:fuzz": "node tests/fuzz/iocFuzzer.js",
     "ci": "node scripts/ci-runner.js",
     "security:scan": "node scripts/security-scan.js",

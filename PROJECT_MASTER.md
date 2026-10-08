@@ -246,4 +246,17 @@ Requirement $\rightarrow$ Use Case $\rightarrow$ Asset $\rightarrow$ DFD Flow $\
 10. **Test:** `tests/integration/tlpAccess.test.js` (Asserting 403 and feed egress filtering)
 11. **Deployment Control:** `k8s/deployment.yaml` (`readOnlyRootFilesystem: true`, non-root user UID 10001, drop ALL capabilities)
 
+---
+
+## 13. Milestone M11: Controlled Vulnerability Demonstration & Secure Refactoring Preparation
+
+* **Status:** COMPLETE
+* **Demonstrated Vulnerabilities:**
+  1. `V02` (CWE-639 / BOLA / IDOR): `GET /api/reports/:id` lacks object-level ownership & TLP check; leaks `TLP:RED` reports across tenant boundaries.
+  2. `V04` (CWE-79 / Stored XSS): `POST /api/reports` naive regex blacklist bypass allows storing and serving malicious HTML event handlers (`onmouseover`, `ontoggle`).
+* **Test Suite:** `tests/vulnerability/vulnerabilityDemo.test.js` (`npm run test:vuln` — 5/5 subtests passing demonstration of weaknesses).
+* **Regression Suite:** `npm test` (53/53 tests passing across 10 test suites).
+* **Evidence Document:** [`evidence/M11_VULNERABILITY_DEMONSTRATION.md`](file:///v:/SSE-ENDSEM/evidence/M11_VULNERABILITY_DEMONSTRATION.md).
+* **Scheduled Remediation:** Milestone M12.
+
 

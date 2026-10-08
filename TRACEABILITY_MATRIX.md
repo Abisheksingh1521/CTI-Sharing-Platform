@@ -39,4 +39,18 @@ The following matrix documents the unbroken chain of continuity connecting requi
 | `REQ-SEC-08` | Incident XSS | `UC-02` | `A05` | `IF-01` | `T07 (Tampering)`| `V04` (CWE-79)  | `CTI-105` (`CTI-7`) | `src/controllers/reportController.js`| `tests/integration/iocReportApi.test.js`|
 | `REQ-SEC-09` | Analyst Triage | `UC-02` | `A06` | `IF-02` | `T10 (Tampering)`| `V06` (CWE-778) | `CTI-106` (`CTI-8`) | `src/controllers/triageController.js` | `tests/integration/triageFeedApi.test.js` |
 
+---
+
+## 3. Milestone M11: Controlled Vulnerability Demonstration Traceability
+
+The table below connects demonstrated weaknesses to their reproduction tests and scheduled M12 remediation targets:
+
+| Vuln ID | Vulnerability Classification | CWE | Affected Component | Reproduction Test Suite | Observed Insecure Behavior | Planned M12 Remediation |
+| :---: | :--- | :---: | :--- | :--- | :--- | :--- |
+| **`V02`** | Broken Object-Level Authorization (IDOR) | CWE-639 | `GET /api/reports/:id` in `reportController.js` | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 1.2, 1.3) | HTTP 200 OK leaks `TLP:RED` report & exploit details across organization boundaries | Integrate `canAccessTLP` & verify `req.user.orgId === report.org_id` on `TLP:RED` (enforce 403 Forbidden) |
+| **`V04`** | Stored Cross-Site Scripting (XSS) | CWE-79 | `POST /api/reports` in `reportController.js` | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 2.1, 2.2) | Naive regex blacklist permits `onmouseover` and `ontoggle` event handlers to persist in database | Replace blacklist with comprehensive HTML entity encoding or strict tag/attribute stripping |
+
+*Detailed Evidence Document:* [`evidence/M11_VULNERABILITY_DEMONSTRATION.md`](file:///v:/SSE-ENDSEM/evidence/M11_VULNERABILITY_DEMONSTRATION.md)  
+*Raw Test Run Log:* [`evidence/p11_vulnerability_tests.txt`](file:///v:/SSE-ENDSEM/evidence/p11_vulnerability_tests.txt)
+
 
