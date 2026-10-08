@@ -41,17 +41,17 @@ The following matrix documents the unbroken chain of continuity connecting requi
 
 ---
 
-## 3. Milestone M11: Controlled Vulnerability Demonstration Traceability
+## 3. Milestone M11/M12: Vulnerability Demonstration & Remediation Traceability
 
-The table below connects demonstrated weaknesses to their reproduction tests and scheduled M12 remediation targets:
+The table below connects demonstrated weaknesses, their initial baseline reproduction tests, and their verified Phase 12 (M12) remediations:
 
-| Vuln ID | Vulnerability Classification | CWE | Affected Component | Reproduction Test Suite | Observed Insecure Behavior | Planned M12 Remediation |
-| :---: | :--- | :---: | :--- | :--- | :--- | :--- |
-| **`V02`** | Broken Object-Level Authorization (IDOR) | CWE-639 | `GET /api/reports/:id` in `reportController.js` | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 1.2, 1.3) | HTTP 200 OK leaks `TLP:RED` report & exploit details across organization boundaries | Integrate `canAccessTLP` & verify `req.user.orgId === report.org_id` on `TLP:RED` (enforce 403 Forbidden) |
-| **`V04`** | Stored Cross-Site Scripting (XSS) | CWE-79 | `POST /api/reports` in `reportController.js` | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 2.1, 2.2) | Naive regex blacklist permits `onmouseover` and `ontoggle` event handlers to persist in database | Replace blacklist with comprehensive HTML entity encoding or strict tag/attribute stripping |
+| Vuln ID | Vulnerability Classification | CWE | Affected Component | M11 Baseline Insecure Behavior | M12 Remediation Implementation | Remediation Test Verification | Status |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
+| **`V02`** | Broken Object-Level Authorization (IDOR) | CWE-639 | `GET /api/reports/:id` in `reportController.js` | HTTP 200 OK leaked `TLP:RED` report & exploit details across tenant boundaries | Integrated `canAccessTLP`, enforced tenant isolation, and logged `UNAUTHORIZED_REPORT_ACCESS_BLOCKED` to audit log | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 1.2–1.5 assert 403 Forbidden & audit entry) | **REMEDIATED (VERIFIED)** |
+| **`V04`** | Stored Cross-Site Scripting (XSS) | CWE-79 | `POST /api/reports` in `reportController.js` | Naive regex blacklist permitted `onmouseover` and `ontoggle` event handlers to persist | Replaced regex with `SanitizerService` neutralizing all `on*` event handlers and dangerous URI schemes | `tests/vulnerability/vulnerabilityDemo.test.js` (Subtest 2.1–2.3 assert event handlers stripped) | **REMEDIATED (VERIFIED)** |
 
-*Detailed Evidence Document:* [`evidence/M11_VULNERABILITY_DEMONSTRATION.md`](file:///v:/SSE-ENDSEM/evidence/M11_VULNERABILITY_DEMONSTRATION.md)  
-*Raw Test Run Log:* [`evidence/p11_vulnerability_tests.txt`](file:///v:/SSE-ENDSEM/evidence/p11_vulnerability_tests.txt)
+*Phase 11 Baseline Evidence:* [`evidence/M11_VULNERABILITY_DEMONSTRATION.md`](file:///v:/SSE-ENDSEM/evidence/M11_VULNERABILITY_DEMONSTRATION.md)  
+*Phase 12 Remediation Evidence:* [`evidence/PHASE_12_REMEDIATION_EVIDENCE.md`](file:///v:/SSE-ENDSEM/evidence/PHASE_12_REMEDIATION_EVIDENCE.md)
 
 ---
 

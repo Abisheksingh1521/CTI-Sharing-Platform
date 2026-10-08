@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-08T08:50:37.972Z",
-  "gitCommit": "3d6d24c34f7d833ed24d5b0743d16745260d1e7d",
-  "totalFiles": 36,
-  "overallRootHash": "adc339156005e077e2821c7bc5e8b4bae4e050dd4fbb1c0510e892b9a221ff30",
+  "generatedAt": "2026-10-08T09:01:12.023Z",
+  "gitCommit": "49c395eecf1563759ab7350dea83b135c5ba7acc",
+  "totalFiles": 38,
+  "overallRootHash": "87d9568d793e556e4fc87d5bb261516893f97ac3797b00c9d5e4ad59162793a0",
   "artifacts": {
     ".env.example": {
       "sha256": "f30d6fa6e8a3f4a7f46a7afa74b7abde473dd134074d5bd891ea4dd83fd53a42",
@@ -41,6 +41,10 @@
       "sha256": "299df9026b4ef495cdd05eb8e5a4687dab920f62232986f8e69246602f24c703",
       "sizeBytes": 42043
     },
+    "scripts/generate_phase12_docx.py": {
+      "sha256": "f4f69d9eef3aa89168469a5cadc4b5f30f8fdb31e4eebcf7945a89489d7d1af2",
+      "sizeBytes": 21440
+    },
     "scripts/generate_phase1_to_10_docx.py": {
       "sha256": "f7d05b33bbe24d4c7d17a948d086aacd3af1ed24f70c75ee9318351cc04c1698",
       "sizeBytes": 103525
@@ -54,8 +58,8 @@
       "sizeBytes": 274
     },
     "scripts/security-scan.js": {
-      "sha256": "f3424f24dec59e97716b8e2374b90d5d2ae894cbfbe0da4aa3a3ffec7887d58b",
-      "sizeBytes": 7121
+      "sha256": "3d54c409269913f5da1a23537496ae89f91efed0c1396977ae1df413fc77032e",
+      "sizeBytes": 6980
     },
     "scripts/test_docx_builder.py": {
       "sha256": "eef3cb8a8bb6adb62cf777021397b220b94803004b8a6b5d588606dd72b4a749",
@@ -90,8 +94,8 @@
       "sizeBytes": 6810
     },
     "src/controllers/reportController.js": {
-      "sha256": "01cfeec0237cd0e6b9c9ce1b60557b97fe4f6f97a6951c29ac8cba97a941d39b",
-      "sizeBytes": 4847
+      "sha256": "f14206514666c42957d7e75679f9c35a563c2b55fb2604a43c0581c43fbeae5d",
+      "sizeBytes": 6714
     },
     "src/controllers/triageController.js": {
       "sha256": "21cd98847dcf94c4db4e06f277601299239aba0c480954b6e17d756d4ef06129",
@@ -114,8 +118,8 @@
       "sizeBytes": 3778
     },
     "src/public/app.js": {
-      "sha256": "b612418e3ebf046e7ef6f0e5665a3a9130c2dfd8f780edf6fd199b63aaa29c78",
-      "sizeBytes": 26365
+      "sha256": "55ff076a79b6d0eb4c72d6e599f78fcdf2ef638ad89f28d2f7b1efaff00ac9f3",
+      "sizeBytes": 26401
     },
     "src/public/index.html": {
       "sha256": "bf9b28d3b6303acc259e4733708e85094ab91a8aa8e59960fe60a72e4c2baf85",
@@ -140,6 +144,10 @@
     "src/services/metricsService.js": {
       "sha256": "4f5f4c013e9184dad042d20d94b617e2a11da9d70a68e95b92d6f24aabb41487",
       "sizeBytes": 2920
+    },
+    "src/services/sanitizerService.js": {
+      "sha256": "1d5ace994d6829eb5cb4c190a6f35c74640982f8395143e6a023ae54880ee51b",
+      "sizeBytes": 2495
     },
     "src/services/stixFactory.js": {
       "sha256": "25e4fae3774e9eda9e19668ed9cb0ff5ee51933d9742a330bf7ea49e907ebb1c",

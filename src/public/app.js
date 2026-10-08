@@ -413,7 +413,7 @@ class CTIApp {
       const repId = (data.report && data.report.id) || data.reportId || 'saved';
       this.showAlert(
         this.reportAlert,
-        `Threat Report Persisted! ID: ${repId}. Notice: Naive regex only removed <script> tags; HTML5 event handlers remain stored in DB (V04).`,
+        `Threat Report Persisted & Sanitized! ID: ${repId}. Prohibited HTML tags, event handlers, and dangerous URI schemes were successfully neutralized (V04 Remediation Active).`,
         'success'
       );
       document.getElementById('report-title').value = '';

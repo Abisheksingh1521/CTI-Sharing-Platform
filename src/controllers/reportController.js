@@ -1,13 +1,19 @@
 const crypto = require('crypto');
 const { dbGet, dbRun, dbAll } = require('../config/database');
 const AuditService = require('../services/auditService');
+const SanitizerService = require('../services/sanitizerService');
+const { canAccessTLP } = require('../middleware/tlpGuard');
 
 /**
  * Threat Report Submission & Management Controller (CTI-105)
+ * Hardened in Phase 12 (M12) to remediate:
+ * - V02 (CWE-639 Broken Object-Level Authorization / IDOR)
+ * - V04 (CWE-79 Stored Cross-Site Scripting via Event Handlers)
  */
 class ReportController {
   /**
    * Submit a new Threat Incident Report
+   * Remediates V04 (CWE-79) by replacing naive regex blacklist with SanitizerService
    */
   static async submitReport(req, res) {
     const { title, summary, tlp = 'AMBER' } = req.body;
@@ -30,14 +36,15 @@ class ReportController {
       });
     }
 
-    // Input Sanitization: Mitigate Stored XSS by escaping script tags and dangerous HTML
-    const sanitizedTitle = title.trim().replace(/<[^>]*>?/gm, '');
-    const sanitizedSummary = summary.trim().replace(/<[^>]*>?/gm, '');
-    const sanitizedMarkdown = contentMarkdown
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Strip script tags
-      .replace(/javascript:/gi, 'blocked:')
-      .replace(/onerror=/gi, 'blocked=')
-      .replace(/onload=/gi, 'blocked=');
+    // Input Sanitization (V04 Remediation):
+    // 1. Strip all HTML from plain-text fields
+    const sanitizedTitle = SanitizerService.stripHtml(title);
+    const sanitizedSummary = SanitizerService.stripHtml(summary);
+
+    // 2. Canonicalize & sanitize rich Markdown:
+    // Strips script/iframe/dangerous tags, neutralizes ALL on* event handlers,
+    // and blocks dangerous URI schemes (javascript:, data:, vbscript:)
+    const sanitizedMarkdown = SanitizerService.sanitizeMarkdown(contentMarkdown);
 
     const reportId = 'rep-' + crypto.randomUUID();
 
@@ -76,13 +83,13 @@ class ReportController {
   }
 
   /**
-   * List Threat Reports
+   * List Threat Reports (TLP Filtered)
    */
   static async getReports(req, res) {
     const { tlp, status } = req.query;
 
     let query = `
-      SELECT r.id, r.title, r.summary, r.tlp_level, r.status, r.created_at,
+      SELECT r.id, r.title, r.summary, r.tlp_level, r.status, r.created_at, r.org_id,
              o.name as author_org, u.username as author_user
       FROM threat_reports r
       JOIN organizations o ON r.org_id = o.id
@@ -105,7 +112,9 @@ class ReportController {
 
     try {
       const reports = await dbAll(query, params);
-      return res.status(200).json({ count: reports.length, reports });
+      // Enforce TLP & Multi-Tenant filtering on list view
+      const authorizedReports = reports.filter((r) => canAccessTLP(req.user, r));
+      return res.status(200).json({ count: authorizedReports.length, reports: authorizedReports });
     } catch (err) {
       return res.status(500).json({ error: 'Internal Server Error', message: 'Failed to query threat reports' });
     }
@@ -113,9 +122,13 @@ class ReportController {
 
   /**
    * Get single report with its associated indicators
+   * Remediates V02 (CWE-639 BOLA / IDOR):
+   * Enforces object-level authorization, organization ownership, and TLP clearance.
+   * Records unauthorized access attempts in the tamper-evident audit trail.
    */
   static async getReportById(req, res) {
     const { id } = req.params;
+    const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
 
     try {
       const report = await dbGet(
@@ -129,6 +142,24 @@ class ReportController {
 
       if (!report) {
         return res.status(404).json({ error: 'Not Found', message: `Threat Report '${id}' not found` });
+      }
+
+      // V02 REMEDIATION: Enforce Server-Side Object-Level Authorization & TLP Policy
+      const hasAccess = canAccessTLP(req.user, report);
+      if (!hasAccess) {
+        // Record denied access attempt in immutable audit trail (Forensic non-repudiation)
+        await AuditService.logEvent({
+          userId: req.user ? req.user.id : null,
+          eventType: 'UNAUTHORIZED_REPORT_ACCESS_BLOCKED',
+          ipAddress: clientIp,
+          resourceId: id,
+          actionDetails: `Blocked unauthorized access attempt by user '${req.user ? req.user.username : 'ANONYMOUS'}' (${req.user ? req.user.role : 'NONE'}, Org: '${req.user ? (req.user.orgId || req.user.org_id) : 'NONE'}') to report '${report.title}' (TLP:${report.tlp_level}, Org: '${report.org_id}')`
+        });
+
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Access Denied: You lack authorization to view this threat report due to organization or TLP clearance restrictions.'
+        });
       }
 
       // Query indicators associated with this report
