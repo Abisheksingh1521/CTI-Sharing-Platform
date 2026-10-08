@@ -240,7 +240,7 @@ The platform is engineered to operate reliably in the following environment:
 4. **Standardized Egress Format:** Dissemination of threat intelligence must conform strictly to the OASIS STIX 2.1 JSON bundle specification, utilizing standard STIX Cyber Observables (SCOs) such as `ipv4-addr`, `ipv6-addr`, `domain-name`, and `file`.
 5. **Payload Limits:** The web application and API gateway must restrict HTTP request body sizes to a maximum of 100KB to mitigate memory exhaustion Denial of Service attacks.
 6. **Zero Hardcoded Secrets:** No cryptographic signing keys, database passwords, or operational secrets shall be committed to version control. All configuration must be provided via environment variables (`.env`).
-7. **Audit Chain Constraint:** Every audit log record must contain the cryptographic SHA-256 hash of its immediately preceding record. The audit log must never be described as "immutable" or "blockchain"; it must be accurately identified as a **Tamper-Evident SHA-256 Hash-Chained Audit Log**.
+7. **Audit Chain Constraint:** Every audit log record must contain the cryptographic SHA-256 hash of its immediately preceding record. The audit log must never be described as "immutable" or "distributed ledger"; it must be accurately identified as a **Tamper-Evident SHA-256 Hash-Chained Audit Log**.
 
 ### 2.6 Assumptions and Dependencies
 * **Network Time Synchronization:** Participating servers and analyst client systems maintain synchronized clocks via Network Time Protocol (NTP) to guarantee TOTP token validity within the ±30-second verification window.
