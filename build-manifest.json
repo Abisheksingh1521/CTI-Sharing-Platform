@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-08T09:45:31.860Z",
-  "gitCommit": "5767e963e8c8b83400b9e74c94460381cce50f7c",
-  "totalFiles": 48,
-  "overallRootHash": "023ffac0e687e1e88342657eb85dc933530f30f744b1b186c51b07e69eff4817",
+  "generatedAt": "2026-10-08T10:00:42.283Z",
+  "gitCommit": "972237758e4dce4aa1098f25c43b6e7c55b48614",
+  "totalFiles": 51,
+  "overallRootHash": "fbabbf1869e822fd52ceb05474a5b5ca3eea32bd29cc017a039e353546f98eca",
   "artifacts": {
     ".dockerignore": {
       "sha256": "2040d49342e96346f0dfd2f60cbbf8a9dca67edb1266429c925c4012c1eb74c1",
@@ -41,9 +41,17 @@
       "sha256": "5cac236eeefd31adb7affa5e6a8308fd83fb9293991c78f89325f38ab93723c8",
       "sizeBytes": 1498
     },
+    "scripts/__pycache__/build_full_report.cpython-313.pyc": {
+      "sha256": "23dcf4e5f9f239d32e542498174eda3a12290b074c4797ba08e5f47097e1d451",
+      "sizeBytes": 10511
+    },
     "scripts/__pycache__/verify_docx.cpython-313.pyc": {
       "sha256": "9a3ba17bb1c799b2cc4f2a16c6aa5f6548c2f301322e44945a96e14e44798037",
       "sizeBytes": 4893
+    },
+    "scripts/build_full_report.py": {
+      "sha256": "c5c27e4796eeb0e29ae8f75d6f288c9aea31fbc824fcc47772ec0267858b54d4",
+      "sizeBytes": 7529
     },
     "scripts/ci-runner.js": {
       "sha256": "a784ae2faf79383027557a186bd4abce95cc2a2c3a2fe913d7812c4215e6e65a",
@@ -88,6 +96,10 @@
     "scripts/init-db.js": {
       "sha256": "d714f23719b80665a80b70652a9d2ab3200d8b630c51191dd7634f92504e3668",
       "sizeBytes": 1030
+    },
+    "scripts/make_final_report.py": {
+      "sha256": "30185235e048355a1c342e624acadfa211339c0ccf46fc14020ddcd9c6f0c5c6",
+      "sizeBytes": 55323
     },
     "scripts/reset-audit.js": {
       "sha256": "f5bbb8f71308bb1b7f5b1fd37ab5402c101358bc6e8b148ceddbdb2851e05a17",

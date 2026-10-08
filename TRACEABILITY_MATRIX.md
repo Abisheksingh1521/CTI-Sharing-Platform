@@ -100,6 +100,74 @@ The table below establishes the complete 11-column trace connecting platform req
 | `REQ-SEC-08` | `UC-02` | `IF-01` | `T07 (Tampering)` | `V04` (CWE-79)  | Node E1: Stored XSS via Event Handlers | `CTI-105` | `src/services/sanitizerService.js`, `reportController.js` | `tests/unit/sanitizer.test.js`, `tests/vulnerability/vulnerabilityDemo.test.js` (V04) | Categories 5 & 6: Title, Markdown & Nested Tag Evasion (18 cases) | Stage 4 (Unit), Stage 7 (Vuln Suite), Stage 8 (Fuzzer) |
 | `REQ-SEC-09` | `UC-02` | `IF-02` | `T10 (Tampering)` | `V06` (CWE-778) | Node C2: False IoC Poisoning | `CTI-106` | `src/controllers/triageController.js` | `tests/integration/triageFeedApi.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 7) | Category 7: Confidence Boundary & Category 9 Triage Payload Fuzz | Stage 5 (Integration), Stage 8 (Fuzz Testing) |
 
+---
+
+## 7. Phase 15: Operational Logging, Monitoring & Hardening Controls Traceability
+
+The table below connects operational monitoring, audit logging, and hardening controls to their implementation and verification evidence:
+
+| Control ID | Operational Domain | Governance Standard | Implementation / File | Verification Command / Metric | Evidence Reference |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **`CTRL-15-01`** | **Security Audit Logging** | NIST SP 800-218 PO.3 | `src/services/auditService.js` | `npm run audit:verify` (1,127 records verified) | `evidence/PHASE_15_LOGGING_MONITORING_HARDENING_EVIDENCE.md` |
+| **`CTRL-15-02`** | **Operational Metrics** | RFC 7230 / Prometheus | `src/server.js` (`GET /metrics`) | `cti_http_requests_total`, `cti_failed_logins_total` | `evidence/PHASE_15_LOGGING_MONITORING_HARDENING_EVIDENCE.md` |
+| **`CTRL-15-03`** | **Brute-Force Alerting** | OWASP ASVS 2.2 | Prometheus Alert Rule | `rate(cti_failed_logins_total[5m]) > 5` | Section 3 in `PHASE_15_LOGGING_MONITORING_HARDENING.md` |
+| **`CTRL-15-04`** | **Rate Limiting Guard** | OWASP ASVS 13.1 | `src/middleware/rateLimiter.js` | 100 req / 15m sliding window enforcement | `tests/integration/authApi.test.js` |
+| **`CTRL-15-05`** | **Production Error Masking**| CWE-209 | `src/server.js` | Stack traces suppressed when `NODE_ENV=production` | Section 4 in `PHASE_15_LOGGING_MONITORING_HARDENING.md` |
+| **`CTRL-15-06`** | **Container Hardening** | CIS Docker 4.1/5.1 | `Dockerfile` | UID 10001, minimal slim base, healthcheck | `scripts/validate-deployment.js` (14/14 passed) |
+| **`CTRL-15-07`** | **K8s Security Context** | NSA/CISA K8s Guide | `k8s/deployment.yaml` | `runAsNonRoot: true`, `readOnlyRootFilesystem: true` | `scripts/validate-deployment.js` (Static validation) |
+
+---
+
+## 8. Phase 16: Master Critical End-to-End Traceability Thread
+
+The exam mandates one critical unbroken continuity trace showing end-to-end alignment across all artifacts for the core capability: **Confidentiality & TLP Intelligence Access Control**:
+
+```
+[Requirement: REQ-SEC-04]
+Traffic Light Protocol (TLP) Enforcement across CLEAR, GREEN, AMBER, RED
+       │
+       ▼
+[Use Case: UC-02]
+Review & Classify Threat Intelligence with TLP Clearance Barriers
+       │
+       ▼
+[Data Flow Diagram: IF-03 / Process 3.0]
+Threat Feed Egress Flow intercepting queries before serialization
+       │
+       ▼
+[STRIDE Threat: T04 / T08]
+Unauthorized Egress of TLP:RED Intelligence / Information Disclosure
+       │
+       ▼
+[Vulnerability: V02 (CWE-639)]
+Broken Object-Level Authorization / BOLA / IDOR on Report Retrieval
+       │
+       ▼
+[Attack Tree: Root -> Branch B -> Leaf B2]
+Exfiltrate TLP:RED -> Exploit API Access -> Broken TLP Authorization
+       │
+       ▼
+[Jira Story: CTI-107]
+TLP Classification & Access Control Enforcement
+       │
+       ▼
+[Jira Task: CTI-107-T1]
+Implement canAccessTLP Guard and Block Cross-Tenant Egress
+       │
+       ▼
+[Implementation: src/middleware/tlpGuard.js & src/controllers/reportController.js]
+Policy function evaluates role, tenancy, and TLP level; returns 403 Forbidden
+       │
+       ▼
+[Security Test: tests/vulnerability/vulnerabilityDemo.test.js & tests/e2e/ctiWorkflow.test.js]
+Automated test asserts HTTP 403 Forbidden on unauthorized access + Audit log created
+       │
+       ▼
+[Deployment Control: k8s/deployment.yaml]
+Pod security context: runAsNonRoot: true (UID 10001), readOnlyRootFilesystem: true
+```
+
+
 
 
 

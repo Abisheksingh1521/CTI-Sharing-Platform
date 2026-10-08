@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-08T09:40:37.510Z",
+  "timestamp": "2026-10-08T09:59:56.167Z",
   "totalCases": 94,
   "passedCases": 94,
   "failedCases": 0,
@@ -576,9 +576,9 @@
       "category": "Confidence Values",
       "testName": "Non-numeric string (\"hundred\")",
       "payload": "hundred",
-      "status": 200,
+      "status": 201,
       "passed": true,
-      "details": "Returned status 200"
+      "details": "Returned status 201"
     },
     {
       "category": "Confidence Values",
@@ -632,9 +632,9 @@
       "category": "TLP Values",
       "testName": "Empty string TLP (\"\")",
       "payload": "",
-      "status": 201,
+      "status": 200,
       "passed": true,
-      "details": "Threat indicator ingested successfully. Queued for analyst triage."
+      "details": "Indicator already cataloged in platform. Duplicate sighting recorded."
     },
     {
       "category": "TLP Values",
@@ -791,7 +791,7 @@
     {
       "category": "Authorization Integrity",
       "testName": "Temporary MFA token accessing protected endpoint",
-      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1hbmFseXN0LTAxIiwidXNlcm5hbWUiOiJhbmFseXN0X3JpeWEiLCJyb2xlIjoiUk9MRV9BTkFMWVNUIiwib3JnSWQiOiJvcmctY2VydC1pbiIsInR5cGUiOiJNRkFfVEVNUCIsImlhdCI6MTc5MTQ1MjQzNiwiZXhwIjoxNzkxNDUyNzM2fQ.TX_gu9opgpWQZIZRjZ4B7af3L0ZWRcbvZsTJNz3s8BE",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1hbmFseXN0LTAxIiwidXNlcm5hbWUiOiJhbmFseXN0X3JpeWEiLCJyb2xlIjoiUk9MRV9BTkFMWVNUIiwib3JnSWQiOiJvcmctY2VydC1pbiIsInR5cGUiOiJNRkFfVEVNUCIsImlhdCI6MTc5MTQ1MzU5NCwiZXhwIjoxNzkxNDUzODk0fQ.eq4O25sPkPzu0jv52ACAlNcd2-Mdpm0c6-RRxbPSu_g",
       "status": 401,
       "passed": true,
       "details": "Enforced HTTP 401"
@@ -815,7 +815,7 @@
     {
       "category": "Authorization Integrity",
       "testName": "Cross-tenant IDOR access without authorization",
-      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1jb25zdW1lci0wMSIsInVzZXJuYW1lIjoiY29uc3VtZXJfc2llbSIsImVtYWlsIjoiY29uc3VtZXJAc2llbS5sb2NhbCIsInJvbGUiOiJST0xFX0NPTlNVTUVSIiwib3JnSWQiOiJvcmctY3liZXItZGVmZW5zZSIsInR5cGUiOiJBQ0NFU1MiLCJpYXQiOjE3OTE0NTI0MzYsImV4cCI6MTc5MTQ1NjAzNn0.Qf6C8m9qTkebRPaw7tVWwDlT4eDIMPPDUtHAmXQBEXY",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1jb25zdW1lci0wMSIsInVzZXJuYW1lIjoiY29uc3VtZXJfc2llbSIsImVtYWlsIjoiY29uc3VtZXJAc2llbS5sb2NhbCIsInJvbGUiOiJST0xFX0NPTlNVTUVSIiwib3JnSWQiOiJvcmctY3liZXItZGVmZW5zZSIsInR5cGUiOiJBQ0NFU1MiLCJpYXQiOjE3OTE0NTM1OTUsImV4cCI6MTc5MTQ1NzE5NX0.ZNhbE53eherlUn-YvLgYg0F1-jeMLVYhtZmdoXagrqA",
       "status": 403,
       "passed": true,
       "details": "Enforced HTTP 403"
