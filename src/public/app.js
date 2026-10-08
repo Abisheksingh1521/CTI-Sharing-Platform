@@ -234,7 +234,7 @@ class CTIApp {
         throw new Error(data.message || 'Authentication failed');
       }
 
-      this.mfaToken = data.mfaToken;
+      this.mfaToken = data.tempToken || data.mfaToken;
       this.formLoginStep1.classList.add('hidden');
       this.formLoginStep2.classList.remove('hidden');
       document.getElementById('auth-step-number').textContent = '2';
@@ -263,7 +263,7 @@ class CTIApp {
       const res = await fetch('/api/auth/verify-mfa', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mfaToken: this.mfaToken, totpCode })
+        body: JSON.stringify({ tempToken: this.mfaToken, mfaToken: this.mfaToken, totpCode })
       });
 
       const data = await res.json();
@@ -271,7 +271,7 @@ class CTIApp {
         throw new Error(data.message || 'MFA validation failed');
       }
 
-      this.token = data.token;
+      this.token = data.accessToken || data.token;
       this.currentUser = data.user;
       localStorage.setItem('cti_jwt', this.token);
       localStorage.setItem('cti_user', JSON.stringify(this.currentUser));
