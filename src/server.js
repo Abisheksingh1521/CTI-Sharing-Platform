@@ -9,6 +9,8 @@ const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
 const { authGuard } = require('./middleware/authGuard');
 const { rbacGuard } = require('./middleware/rbacGuard');
 const AuthController = require('./controllers/authController');
+const IoCController = require('./controllers/iocController');
+const ReportController = require('./controllers/reportController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -52,6 +54,16 @@ app.post('/api/auth/register', authLimiter, AuthController.register);
 app.post('/api/auth/login', authLimiter, AuthController.login);
 app.post('/api/auth/verify-mfa', authLimiter, AuthController.verifyMfa);
 app.get('/api/auth/me', authGuard, AuthController.getProfile);
+
+// Threat Indicator (IoC) Routes (CTI-103, CTI-104)
+app.post('/api/iocs', authGuard, rbacGuard(['ROLE_CONTRIBUTOR', 'ROLE_ANALYST', 'ROLE_ADMIN']), IoCController.submitIoC);
+app.get('/api/iocs', authGuard, IoCController.getIoCs);
+app.get('/api/iocs/:id', authGuard, IoCController.getIoCById);
+
+// Threat Incident Report Routes (CTI-105)
+app.post('/api/reports', authGuard, rbacGuard(['ROLE_CONTRIBUTOR', 'ROLE_ANALYST', 'ROLE_ADMIN']), ReportController.submitReport);
+app.get('/api/reports', authGuard, ReportController.getReports);
+app.get('/api/reports/:id', authGuard, ReportController.getReportById);
 
 // RBAC Role Verification Test Endpoints
 app.get('/api/test/analyst-only', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN']), (req, res) => {

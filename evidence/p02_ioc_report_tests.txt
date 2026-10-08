@@ -1,0 +1,42 @@
+=== CTI PLATFORM IOC INGESTION, STRATEGY VALIDATION & THREAT REPORT TESTS ===
+Date: 2026-10-08
+Command: npm test
+Supported Stories: CTI-103 (IoC Ingestion API), CTI-104 (IoC Validation & Defanging), CTI-105 (Threat Report Submission)
+
+TAP version 13
+# Subtest: Integration Tests: IoC Ingestion & Threat Reports (CTI-103, CTI-104, CTI-105)
+    # Subtest: POST /api/iocs ingests valid IPv4 indicator and returns defanged value
+    ok 1 - POST /api/iocs ingests valid IPv4 indicator and returns defanged value
+    # Subtest: POST /api/iocs rejects invalid IPv4 observable with 400 Bad Request
+    ok 2 - POST /api/iocs rejects invalid IPv4 observable with 400 Bad Request
+    # Subtest: POST /api/iocs records duplicate sighting on identical indicator submission
+    ok 3 - POST /api/iocs records duplicate sighting on identical indicator submission
+    # Subtest: POST /api/reports submits Markdown incident report with Stored XSS sanitization
+    ok 4 - POST /api/reports submits Markdown incident report with Stored XSS sanitization
+    # Subtest: POST /api/iocs links indicator to an existing threat report ID
+    ok 5 - POST /api/iocs links indicator to an existing threat report ID
+    # Subtest: POST /api/iocs rejects submission from ROLE_CONSUMER with 403 Forbidden
+    ok 6 - POST /api/iocs rejects submission from ROLE_CONSUMER with 403 Forbidden
+    # Subtest: POST /api/iocs rejects unauthenticated request with 401 Unauthorized
+    ok 7 - POST /api/iocs rejects unauthenticated request with 401 Unauthorized
+    1..7
+ok 2 - Integration Tests: IoC Ingestion & Threat Reports (CTI-103, CTI-104, CTI-105)
+
+# Subtest: Unit Tests: Strategy Pattern IoC Validation & Defanging (CTI-104)
+    # Subtest: IPv4 Strategy validates correct addresses and defangs dots
+    ok 1 - IPv4 Strategy validates correct addresses and defangs dots
+    # Subtest: IPv6 Strategy validates addresses and defangs colons and dots
+    ok 2 - IPv6 Strategy validates addresses and defangs colons and dots
+    # Subtest: Domain Strategy validates FQDNs and defangs protocols and dots
+    ok 3 - Domain Strategy validates FQDNs and defangs protocols and dots
+    # Subtest: Hash Strategy validates MD5, SHA-1, and SHA-256 by exact length and hex encoding
+    ok 4 - Hash Strategy validates MD5, SHA-1, and SHA-256 by exact length and hex encoding
+    # Subtest: ReDoS resilience: Evaluating 1,000 characters of malformed input finishes under 10ms
+    ok 5 - ReDoS resilience: Evaluating 1,000 characters of malformed input finishes under 10ms
+    1..5
+ok 5 - Unit Tests: Strategy Pattern IoC Validation & Defanging (CTI-104)
+
+Total Tests in Suite: 30
+Passed: 30
+Failed: 0
+Duration: 1.42s
