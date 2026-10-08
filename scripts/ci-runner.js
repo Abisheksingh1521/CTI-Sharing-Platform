@@ -22,28 +22,53 @@ const PIPELINE_STAGES = [
     critical: true
   },
   {
-    name: 'Stage 2: Dependency Security Vulnerability Audit',
+    name: 'Stage 2: Static Application Security Testing (SAST)',
+    command: 'node scripts/security-scan.js',
+    critical: true
+  },
+  {
+    name: 'Stage 3: Dependency Security Vulnerability Audit',
     command: 'npm audit --json',
     critical: false, // allows documenting dependency CVEs without breaking pipeline build
     parseJson: true
   },
   {
-    name: 'Stage 3: Static Application Security Testing (SAST)',
-    command: 'node scripts/security-scan.js',
+    name: 'Stage 4: Automated Unit Testing (Services & Defanging)',
+    command: 'npm run test:unit',
     critical: true
   },
   {
-    name: 'Stage 4: Automated Security Regression & Unit Testing',
-    command: 'npm test',
+    name: 'Stage 5: Automated Integration Testing (Auth, RBAC, DB)',
+    command: 'npm run test:integration',
     critical: true
   },
   {
-    name: 'Stage 5: Cryptographic Audit Hash Chain Verification',
+    name: 'Stage 6: End-to-End Realistic CTI Workflow Testing',
+    command: 'npm run test:e2e',
+    critical: true
+  },
+  {
+    name: 'Stage 7: Security Vulnerability Regression Suite (V01-V06)',
+    command: 'npm run test:vuln',
+    critical: true
+  },
+  {
+    name: 'Stage 8: Application-Level Security Fuzz Testing',
+    command: 'node scripts/fuzz-security.js',
+    critical: true
+  },
+  {
+    name: 'Stage 9: Cryptographic Audit Hash-Chain Integrity Verification',
     command: 'node scripts/verify-audit-chain.js',
     critical: true
   },
   {
-    name: 'Stage 6: Build Artifact Integrity & Reproducibility Seal',
+    name: 'Stage 10: Container Hardening & Kubernetes Deployment Validation',
+    command: 'node scripts/validate-deployment.js',
+    critical: true
+  },
+  {
+    name: 'Stage 11: Build Artifact Integrity & Reproducibility Seal',
     command: 'node scripts/generate-build-manifest.js',
     critical: true
   }
@@ -51,8 +76,8 @@ const PIPELINE_STAGES = [
 
 function runPipeline() {
   console.log('================================================================');
-  console.log('  PHASE 11: AUTOMATED SECURE BUILD & CI PIPELINE RUNNER         ');
-  console.log('  Standards: NIST SP 800-218 (SSDF) & SLSA Level 2 Integrity    ');
+  console.log('  PHASE 14: SECURE CI/CD PIPELINE & SECURITY ASSURANCE RUNNER   ');
+  console.log('  Standards: NIST SP 800-218 (SSDF), SLSA Level 2, OWASP ASVS   ');
   console.log('================================================================\n');
 
   const results = [];
@@ -96,7 +121,7 @@ function runPipeline() {
   }
 
   console.log('\n================================================================');
-  console.log('  PHASE 11 SECURE BUILD PIPELINE EXECUTION SUMMARY             ');
+  console.log('  PHASE 14 SECURE CI/CD PIPELINE EXECUTION SUMMARY             ');
   console.log('================================================================');
   results.forEach((r, idx) => {
     const pad = ' '.repeat(Math.max(1, 56 - r.name.length));

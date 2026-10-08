@@ -10,8 +10,10 @@
     "test": "node --test --test-concurrency=1 tests/unit/*.test.js tests/integration/*.test.js",
     "test:unit": "node --test --test-concurrency=1 tests/unit/*.test.js",
     "test:integration": "node --test --test-concurrency=1 tests/integration/*.test.js",
+    "test:e2e": "node --test --test-concurrency=1 tests/e2e/*.test.js",
     "test:vuln": "node --test --test-concurrency=1 tests/vulnerability/*.test.js",
-    "test:fuzz": "node tests/fuzz/iocFuzzer.js",
+    "test:fuzz": "node scripts/fuzz-security.js",
+    "fuzz": "node scripts/fuzz-security.js",
     "ci": "node scripts/ci-runner.js",
     "security:scan": "node scripts/security-scan.js",
     "audit:verify": "node scripts/verify-audit-chain.js"

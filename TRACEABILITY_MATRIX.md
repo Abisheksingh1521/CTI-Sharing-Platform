@@ -83,9 +83,23 @@ The table below connects the Phase 13 containerization and orchestration control
 | **`CTRL-13-04`** | **Read-Only Root Filesystem** | NSA/CISA Kubernetes Guide | `k8s/deployment.yaml` | `readOnlyRootFilesystem: true` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
 | **`CTRL-13-05`** | **Dropped Linux Capabilities** | CIS Docker Benchmark 5.2 | `k8s/deployment.yaml` | `capabilities: drop: ["ALL"]` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
 | **`CTRL-13-06`** | **SQLite Single-Replica Governance** | SQLite Architecture Standard | `k8s/deployment.yaml` | `replicas: 1`, `strategy: Recreate` | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
-| **`CTRL-13-07`** | **Dedicated Writable Volume** | POSIX / SQLite WAL Standard | `k8s/deployment.yaml` | Writable `/data` mount | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
-| **`CTRL-13-08`** | **Resource Quotas & DoS Defense** | Kubernetes Best Practices | `k8s/deployment.yaml` | CPU/Mem requests & limits | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
-| **`CTRL-13-09`** | **Liveness & Readiness Probes** | NIST SP 800-190 Section 4.3 | `k8s/deployment.yaml` | `/api/health` probes | Section 4 in `PHASE_13_CONTAINER_EVIDENCE.md` |
+---
+
+## 6. Phase 14: CI/CD, Security Testing & Fuzzing Traceability Matrix
+
+The table below establishes the complete 11-column trace connecting platform requirements, use cases, threats, vulnerabilities, Jira stories, implementations, automated security tests, deterministic fuzz vectors, and CI/CD gate controls:
+
+| Req ID | Use Case | DFD Flow | Threat (STRIDE) | Vuln ID (CWE) | Attack Tree Node | Jira Story | Implementation Module | Automated Security Test | Deterministic Fuzz Test | CI/CD Pipeline Control |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `REQ-SEC-01` | `UC-05` | `IF-01` | `T01 (Spoofing)` | `V01` (CWE-798) | Node A1: Credential Stuffing | `CTI-101` | `src/controllers/authController.js` | `tests/unit/auth.test.js`, `tests/e2e/ctiWorkflow.test.js` (Steps 1–3) | Category 10: Auth Token & Algorithm None Fuzzing (8 cases) | Stage 1 (Detect Secrets), Stage 4 & 5 (Unit & Integration) |
+| `REQ-SEC-02` | `UC-02` | `IF-02` | `T06 (Elevation)` | `V03` (CWE-862) | Node B3: Privilege Escalation | `CTI-102` | `src/middleware/rbacGuard.js` | `tests/integration/rbac.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 4) | Category 10: Missing/Forged Bearer Header Fuzzing (8 cases) | Stage 2 (SAST), Stage 5 (Integration Testing) |
+| `REQ-SEC-03` | `UC-01` | `IF-01` | `T02 (Tampering)` | `V05` (CWE-1333)| Node C1: ReDoS & Malformed IoC | `CTI-104` | `src/services/iocValidator.js` | `tests/unit/validator.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 5) | Categories 1–4: IPv4, IPv6, Domain, Hash Fuzzing (40 cases) | Stage 4 (Unit Tests), Stage 8 (Application Fuzzing) |
+| `REQ-SEC-04` | `UC-02` | `IF-03` | `T04 (Disclosure)`| `V02` (CWE-639) | Node B2: BOLA/IDOR Direct Object Access | `CTI-107` | `src/middleware/tlpGuard.js`, `reportController.js` | `tests/integration/tlpAccess.test.js`, `tests/vulnerability/vulnerabilityDemo.test.js` (V02) | Category 8: TLP Enum Fuzzing & Category 10 IDOR Fuzzing (16 cases) | Stage 7 (Vuln Suite), Stage 8 (Security Fuzzer) |
+| `REQ-SEC-05` | `UC-03` | `IF-03` | `T08 (Disclosure)`| `V02` (CWE-639) | Node B1: Unvetted Feed Scraping | `CTI-108` | `src/services/stixFactory.js`, `feedController.js` | `tests/integration/feed.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 8) | Category 9: Malformed Feed Traversal & Bad Observable Query | Stage 5 (Integration), Stage 6 (E2E Workflow) |
+| `REQ-SEC-07` | `UC-04` | `IF-01,02`| `T03 (Repudiation)`| `V06` (CWE-778) | Node D1: Log Deletion/Tampering | `CTI-109` | `src/services/auditService.js`, `auditController.js` | `tests/unit/auditChain.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 9) | Post-Fuzz SHA-256 Continuous Chain Verification | Stage 9 (Cryptographic Audit Verification) |
+| `REQ-SEC-08` | `UC-02` | `IF-01` | `T07 (Tampering)` | `V04` (CWE-79)  | Node E1: Stored XSS via Event Handlers | `CTI-105` | `src/services/sanitizerService.js`, `reportController.js` | `tests/unit/sanitizer.test.js`, `tests/vulnerability/vulnerabilityDemo.test.js` (V04) | Categories 5 & 6: Title, Markdown & Nested Tag Evasion (18 cases) | Stage 4 (Unit), Stage 7 (Vuln Suite), Stage 8 (Fuzzer) |
+| `REQ-SEC-09` | `UC-02` | `IF-02` | `T10 (Tampering)` | `V06` (CWE-778) | Node C2: False IoC Poisoning | `CTI-106` | `src/controllers/triageController.js` | `tests/integration/triageFeedApi.test.js`, `tests/e2e/ctiWorkflow.test.js` (Step 7) | Category 7: Confidence Boundary & Category 9 Triage Payload Fuzz | Stage 5 (Integration), Stage 8 (Fuzz Testing) |
+
 
 
 

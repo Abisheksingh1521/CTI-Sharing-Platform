@@ -1,0 +1,824 @@
+{
+  "timestamp": "2026-10-08T09:40:37.510Z",
+  "totalCases": 94,
+  "passedCases": 94,
+  "failedCases": 0,
+  "crashes": 0,
+  "dbIntact": true,
+  "categories": {
+    "IPv4 Indicators": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "crashes": 0
+    },
+    "IPv6 Indicators": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Domain Indicators": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "crashes": 0
+    },
+    "File Hashes": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Report Titles": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Report Markdown & XSS": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Confidence Values": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "crashes": 0
+    },
+    "TLP Values": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Malformed IDs & Traversal": {
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "crashes": 0
+    },
+    "Authorization Integrity": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "crashes": 0
+    }
+  },
+  "results": [
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 Octet overflow (999.999.999.999)",
+      "payload": "999.999.999.999",
+      "status": 400,
+      "passed": true,
+      "details": "Value '999.999.999.999' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 with CIDR notation (192.168.1.1/24)",
+      "payload": "192.168.1.1/24",
+      "status": 400,
+      "passed": true,
+      "details": "Value '192.168.1.1/24' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 5 octets (1.2.3.4.5)",
+      "payload": "1.2.3.4.5",
+      "status": 400,
+      "passed": true,
+      "details": "Value '1.2.3.4.5' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 octet with leading zero (010.0.0.1)",
+      "payload": "010.0.0.1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '010.0.0.1' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 double dot (10..0.1)",
+      "payload": "10..0.1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '10..0.1' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 with internal whitespace (192.168. 1.1)",
+      "payload": "192.168. 1.1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '192.168. 1.1' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 with embedded null byte (192.168.1.1\\0)",
+      "payload": "192.168.1.1\u0000",
+      "status": 400,
+      "passed": true,
+      "details": "Value '192.168.1.1\u0000' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 negative octet (-1.0.0.1)",
+      "payload": "-1.0.0.1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '-1.0.0.1' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 256 boundary (256.0.0.1)",
+      "payload": "256.0.0.1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '256.0.0.1' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv4 Indicators",
+      "testName": "IPv4 shell injection (1.1.1.1;cat /etc/passwd)",
+      "payload": "1.1.1.1;cat /etc/passwd",
+      "status": 400,
+      "passed": true,
+      "details": "Value '1.1.1.1;cat /etc/passwd' is not a valid IPV4 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 multiple double colons (::1::1)",
+      "payload": "::1::1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '::1::1' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 triple colon (2001:db8:::1)",
+      "payload": "2001:db8:::1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '2001:db8:::1' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 invalid hex characters (2001:xyz::1)",
+      "payload": "2001:xyz::1",
+      "status": 400,
+      "passed": true,
+      "details": "Value '2001:xyz::1' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 oversized groups (9 groups of ffff)",
+      "payload": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 non-hex trailing (fe80::1%eth0)",
+      "payload": "fe80::1%eth0",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'fe80::1%eth0' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 bracketed input ([2001:db8::1])",
+      "payload": "[2001:db8::1]",
+      "status": 400,
+      "passed": true,
+      "details": "Value '[2001:db8::1]' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 null byte (2001:db8::1\\0)",
+      "payload": "2001:db8::1\u0000",
+      "status": 400,
+      "passed": true,
+      "details": "Value '2001:db8::1\u0000' is not a valid IPV6 observable"
+    },
+    {
+      "category": "IPv6 Indicators",
+      "testName": "IPv6 incomplete group (::gggg)",
+      "payload": "::gggg",
+      "status": 400,
+      "passed": true,
+      "details": "Value '::gggg' is not a valid IPV6 observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain leading hyphen (-evil.com)",
+      "payload": "-evil.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value '-evil.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain consecutive dots (evil..com)",
+      "payload": "evil..com",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil..com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain trailing hyphen in label (evil-.com)",
+      "payload": "evil-.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil-.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain with URL protocol (http://evil.com)",
+      "payload": "http://evil.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'http://evil.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain with path separator (evil.com/path)",
+      "payload": "evil.com/path",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil.com/path' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain invalid special characters (evil$corp.com)",
+      "payload": "evil$corp.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil$corp.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain leading dot (.evil.com)",
+      "payload": ".evil.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value '.evil.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain with embedded null byte (evil.c\\0om)",
+      "payload": "evil.c\u0000om",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil.c\u0000om' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain 260-char label overflow (aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com)",
+      "payload": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "Domain Indicators",
+      "testName": "Domain SQL injection attempt (evil.com'; DROP TABLE threat_indicators;--)",
+      "payload": "evil.com'; DROP TABLE threat_indicators;--",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'evil.com'; DROP TABLE threat_indicators;--' is not a valid DOMAIN observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "MD5 short length (31 chars)",
+      "payload": "d41d8cd98f00b204e9800998ecf8427",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'd41d8cd98f00b204e9800998ecf8427' is not a valid MD5 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "MD5 long length (33 chars)",
+      "payload": "d41d8cd98f00b204e9800998ecf8427ea",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'd41d8cd98f00b204e9800998ecf8427ea' is not a valid MD5 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "MD5 non-hex chars (zzzz...)",
+      "payload": "zzzz8cd98f00b204e9800998ecf8427e",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'zzzz8cd98f00b204e9800998ecf8427e' is not a valid MD5 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "MD5 with null byte",
+      "payload": "d41d8cd98f00b204\u0000e9800998ecf8427e",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'd41d8cd98f00b204\u0000e9800998ecf8427e' is not a valid MD5 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA1 short length (39 chars)",
+      "payload": "da39a3ee5e6b4b0d3255bfef95601890afd8070",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'da39a3ee5e6b4b0d3255bfef95601890afd8070' is not a valid SHA1 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA1 long length (41 chars)",
+      "payload": "da39a3ee5e6b4b0d3255bfef95601890afd80709a",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'da39a3ee5e6b4b0d3255bfef95601890afd80709a' is not a valid SHA1 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA1 non-hex character (g)",
+      "payload": "da39a3ee5e6b4b0d3255bfef95601890afd8070g",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'da39a3ee5e6b4b0d3255bfef95601890afd8070g' is not a valid SHA1 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA1 with internal whitespace",
+      "payload": "da39a3ee5e6b4b0d 3255bfef95601890afd8070",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'da39a3ee5e6b4b0d 3255bfef95601890afd8070' is not a valid SHA1 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA256 short length (63 chars)",
+      "payload": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85' is not a valid SHA256 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA256 long length (65 chars)",
+      "payload": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855a",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855a' is not a valid SHA256 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA256 SQL injection string",
+      "payload": "' OR '1'='1' UNION SELECT * FROM users;--",
+      "status": 400,
+      "passed": true,
+      "details": "Value '' OR '1'='1' UNION SELECT * FROM users;--' is not a valid SHA256 observable"
+    },
+    {
+      "category": "File Hashes",
+      "testName": "SHA256 non-hex unicode symbols",
+      "payload": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8🔥",
+      "status": 400,
+      "passed": true,
+      "details": "Value 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8🔥' is not a valid SHA256 observable"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title with script injection (<script>alert(1)</script>)",
+      "payload": "<script>alert(\"xss\")</script> Campaign A",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title with embedded null byte (Title\\0Zero)",
+      "payload": "Campaign Title\u0000With Null",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title 2,000-character oversized string",
+      "payload": "APT_Report_APT_Report_APT_Report_APT_Rep",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title SQL injection payload",
+      "payload": "Report '; DROP TABLE threat_reports;--",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title Unicode RTL override (\\u202E)",
+      "payload": "Threat Report ‮exe.cod",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title pure HTML tags (<b/><i/><u/>)",
+      "payload": "<b><i><u>Underline Header</u></i></b>",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title multi-byte emoji flood",
+      "payload": "🚨⚠️🚨⚠️🚨⚠️ Threat Incursion 🚨⚠️🚨⚠️",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Titles",
+      "testName": "Title with XML CDATA wrapper",
+      "payload": "<![CDATA[<script>alert(1)</script>]]>",
+      "status": 201,
+      "passed": true,
+      "details": "Stored safely. Contains <script>: false"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS img with onmouseover handler",
+      "payload": "Threat info <img src=\"p.png\" onmouseover",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS svg with onload handler",
+      "payload": "Network map: <svg onload=\"alert(1)\"><cir",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS details with ontoggle handler",
+      "payload": "Details: <details ontoggle=\"fetch('//evi",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS body with onload handler",
+      "payload": "<body onload=alert(document.cookie)>Body",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS iframe remote injection",
+      "payload": "External feed: <iframe src=\"https://evil",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS dangerous javascript: URI scheme",
+      "payload": "Reference: [Analyze Log](javascript:aler",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS dangerous data: URI scheme",
+      "payload": "Payload: <img src=\"data:text/html;base64",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS autofocus element exploit",
+      "payload": "<input autofocus onfocus=\"alert(1)\">",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS nested tag evasion (<<<script>>script>)",
+      "payload": "<<SCRIPT>script>alert(1)<</SCRIPT>/scrip",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Report Markdown & XSS",
+      "testName": "XSS 32KB oversized markdown text with event handlers",
+      "payload": "# Large Threat Incursion\nSafe text. <img",
+      "status": 201,
+      "passed": true,
+      "details": "Sanitized: All dangerous tags/handlers neutralized"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Negative confidence (-1)",
+      "payload": "-1",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Extremely negative confidence (-999999)",
+      "payload": "-999999",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Upper boundary exceed (101)",
+      "payload": "101",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Massive upper exceed (999999)",
+      "payload": "999999",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "String number (\"75\")",
+      "payload": "75",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Non-numeric string (\"hundred\")",
+      "payload": "hundred",
+      "status": 200,
+      "passed": true,
+      "details": "Returned status 200"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Floating point value (85.7)",
+      "payload": "85.7",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "Confidence Values",
+      "testName": "Null confidence (null)",
+      "payload": "null",
+      "status": 201,
+      "passed": true,
+      "details": "Returned status 201"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "Invalid TLP enum (\"PURPLE\")",
+      "payload": "PURPLE",
+      "status": 400,
+      "passed": true,
+      "details": "Invalid TLP level. Must be one of: [CLEAR, GREEN, AMBER, RED]"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "Invalid TLP enum (\"SUPER_RED\")",
+      "payload": "SUPER_RED",
+      "status": 400,
+      "passed": true,
+      "details": "Invalid TLP level. Must be one of: [CLEAR, GREEN, AMBER, RED]"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "TLP with prefix (\"TLP:AMBER\")",
+      "payload": "TLP:AMBER",
+      "status": 400,
+      "passed": true,
+      "details": "Invalid TLP level. Must be one of: [CLEAR, GREEN, AMBER, RED]"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "Numeric TLP (1)",
+      "payload": "1",
+      "status": 400,
+      "passed": true,
+      "details": "TLP level must be a string"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "Empty string TLP (\"\")",
+      "payload": "",
+      "status": 201,
+      "passed": true,
+      "details": "Threat indicator ingested successfully. Queued for analyst triage."
+    },
+    {
+      "category": "TLP Values",
+      "testName": "TLP null byte (\"AMBER\\0\")",
+      "payload": "AMBER\u0000",
+      "status": 400,
+      "passed": true,
+      "details": "Invalid TLP level. Must be one of: [CLEAR, GREEN, AMBER, RED]"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "TLP SQL injection (\"RED; DROP TABLE--\")",
+      "payload": "RED; DROP TABLE--",
+      "status": 400,
+      "passed": true,
+      "details": "Invalid TLP level. Must be one of: [CLEAR, GREEN, AMBER, RED]"
+    },
+    {
+      "category": "TLP Values",
+      "testName": "Valid lower-case TLP (\"green\")",
+      "payload": "green",
+      "status": 201,
+      "passed": true,
+      "details": "Threat indicator ingested successfully. Queued for analyst triage."
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Report ID path traversal (../../etc/passwd)",
+      "payload": "../../etc/passwd",
+      "status": 404,
+      "passed": true,
+      "details": "Threat Report '../../etc/passwd' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Report ID null byte (rep-1\\0.json)",
+      "payload": "rep-1\u0000.json",
+      "status": 404,
+      "passed": true,
+      "details": "Threat Report 'rep-1\u0000.json' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Report ID SQL injection (' OR '1'='1)",
+      "payload": "' OR '1'='1",
+      "status": 404,
+      "passed": true,
+      "details": "Threat Report '' OR '1'='1' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Report ID 1,000 chars oversized",
+      "payload": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 404,
+      "passed": true,
+      "details": "Threat Report 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Report ID Unicode characters (rep-💡)",
+      "payload": "rep-💡",
+      "status": 404,
+      "passed": true,
+      "details": "Threat Report 'rep-💡' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Indicator ID path traversal (ioc-../../etc/passwd)",
+      "payload": "ioc-../../etc/passwd",
+      "status": 404,
+      "passed": true,
+      "details": "Indicator 'ioc-../../etc/passwd' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Indicator ID SQL injection (1; SELECT * FROM audit_logs;)",
+      "payload": "1; SELECT * FROM audit_logs;",
+      "status": 404,
+      "passed": true,
+      "details": "Indicator '1; SELECT * FROM audit_logs;' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Triage ID negative integer (-999)",
+      "payload": "-999",
+      "status": 404,
+      "passed": true,
+      "details": "Indicator '-999' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Triage ID boolean value (true)",
+      "payload": "true",
+      "status": 404,
+      "passed": true,
+      "details": "Indicator 'true' not found"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Triage decision invalid value (\"BYPASS\")",
+      "payload": "ioc-dummy-id",
+      "status": 400,
+      "passed": true,
+      "details": "Decision must be either 'APPROVED' or 'REJECTED'"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Triage justification empty string",
+      "payload": "ioc-dummy-id",
+      "status": 400,
+      "passed": true,
+      "details": "A detailed analyst justification (at least 5 characters) is required"
+    },
+    {
+      "category": "Malformed IDs & Traversal",
+      "testName": "Triage payload missing required fields",
+      "payload": "ioc-dummy-id",
+      "status": 400,
+      "passed": true,
+      "details": "Decision must be either 'APPROVED' or 'REJECTED'"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "No Authorization header on IoC submission",
+      "payload": "None",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Empty Bearer token",
+      "payload": "Bearer ",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Malformed JWT structure (header.payload)",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiJ9.payload",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "JWT with algorithm none attack",
+      "payload": "Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIn0.",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Temporary MFA token accessing protected endpoint",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1hbmFseXN0LTAxIiwidXNlcm5hbWUiOiJhbmFseXN0X3JpeWEiLCJyb2xlIjoiUk9MRV9BTkFMWVNUIiwib3JnSWQiOiJvcmctY2VydC1pbiIsInR5cGUiOiJNRkFfVEVNUCIsImlhdCI6MTc5MTQ1MjQzNiwiZXhwIjoxNzkxNDUyNzM2fQ.TX_gu9opgpWQZIZRjZ4B7af3L0ZWRcbvZsTJNz3s8BE",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Expired token timestamp attack",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci0xIiwiZXhwIjoxNTAwMDAwMDAwfQ.invalid",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Basic Auth instead of Bearer token",
+      "payload": "Basic YWRtaW46cGFzc3dvcmQ=",
+      "status": 401,
+      "passed": true,
+      "details": "Enforced HTTP 401"
+    },
+    {
+      "category": "Authorization Integrity",
+      "testName": "Cross-tenant IDOR access without authorization",
+      "payload": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzci1jb25zdW1lci0wMSIsInVzZXJuYW1lIjoiY29uc3VtZXJfc2llbSIsImVtYWlsIjoiY29uc3VtZXJAc2llbS5sb2NhbCIsInJvbGUiOiJST0xFX0NPTlNVTUVSIiwib3JnSWQiOiJvcmctY3liZXItZGVmZW5zZSIsInR5cGUiOiJBQ0NFU1MiLCJpYXQiOjE3OTE0NTI0MzYsImV4cCI6MTc5MTQ1NjAzNn0.Qf6C8m9qTkebRPaw7tVWwDlT4eDIMPPDUtHAmXQBEXY",
+      "status": 403,
+      "passed": true,
+      "details": "Enforced HTTP 403"
+    }
+  ]
+}

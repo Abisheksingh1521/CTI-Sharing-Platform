@@ -44,8 +44,14 @@ class TriageController {
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
 
     // Validate decision
+    if (!decision || typeof decision !== 'string') {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: "Decision must be either 'APPROVED' or 'REJECTED'"
+      });
+    }
     const validDecisions = ['APPROVED', 'REJECTED'];
-    const normDecision = (decision || '').toUpperCase();
+    const normDecision = decision.trim().toUpperCase();
     if (!validDecisions.includes(normDecision)) {
       return res.status(400).json({
         error: 'Bad Request',
@@ -54,7 +60,7 @@ class TriageController {
     }
 
     // Validate mandatory justification
-    if (!justification || justification.trim().length < 5) {
+    if (!justification || typeof justification !== 'string' || justification.trim().length < 5) {
       return res.status(400).json({
         error: 'Bad Request',
         message: 'A detailed analyst justification (at least 5 characters) is required'
@@ -62,8 +68,14 @@ class TriageController {
     }
 
     // Validate TLP assignment
+    if (assignedTlp !== undefined && assignedTlp !== null && typeof assignedTlp !== 'string') {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Assigned TLP must be a string'
+      });
+    }
     const validTlps = ['CLEAR', 'GREEN', 'AMBER', 'RED'];
-    const normTlp = (assignedTlp || 'AMBER').toUpperCase();
+    const normTlp = (typeof assignedTlp === 'string' && assignedTlp.trim() ? assignedTlp.trim() : 'AMBER').toUpperCase();
     if (!validTlps.includes(normTlp)) {
       return res.status(400).json({
         error: 'Bad Request',

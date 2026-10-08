@@ -27,8 +27,15 @@ class ReportController {
       });
     }
 
+    if (tlp !== undefined && tlp !== null && typeof tlp !== 'string') {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'TLP level must be a string'
+      });
+    }
+
     const validTlps = ['CLEAR', 'GREEN', 'AMBER', 'RED'];
-    const normalizedTlp = (tlp || 'AMBER').toUpperCase();
+    const normalizedTlp = (typeof tlp === 'string' && tlp.trim() ? tlp.trim() : 'AMBER').toUpperCase();
     if (!validTlps.includes(normalizedTlp)) {
       return res.status(400).json({
         error: 'Bad Request',

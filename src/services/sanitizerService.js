@@ -43,10 +43,14 @@ class SanitizerService {
 
     let clean = str.replace(/\0/g, ''); // Strip null bytes
 
-    // 1. Strip prohibited high-risk HTML tags
+    // 1. Strip prohibited high-risk HTML tags iteratively to prevent nested collapse evasion (CWE-182)
     const DANGEROUS_TAGS = ['script', 'iframe', 'object', 'embed', 'svg', 'audio', 'video', 'style', 'link', 'meta', 'base', 'form', 'input', 'button', 'frame', 'frameset', 'applet'];
     const tagPattern = new RegExp(`</?(?:${DANGEROUS_TAGS.join('|')})\\b[^>]*>`, 'gi');
-    clean = clean.replace(tagPattern, '');
+    let prev;
+    do {
+      prev = clean;
+      clean = clean.replace(tagPattern, '');
+    } while (clean !== prev);
 
     // 2. Strip ALL HTML event handlers (on* attributes)
     // Matches onmouseover="...", ontoggle='...', onerror=alert(1), etc.

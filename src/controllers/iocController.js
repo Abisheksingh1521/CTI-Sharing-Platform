@@ -14,16 +14,22 @@ class IoCController {
     const { type, value, description = '', tlp = 'AMBER', reportId = null, confidence = 50, mitreAttackId = null } = req.body;
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
 
-    if (!type || !value) {
+    if (!type || !value || typeof type !== 'string' || typeof value !== 'string') {
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Observable type and value are required'
+        message: 'Observable type and value are required and must be strings'
       });
     }
 
     // Validate TLP enum
+    if (tlp !== undefined && tlp !== null && typeof tlp !== 'string') {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'TLP level must be a string'
+      });
+    }
     const validTlps = ['CLEAR', 'GREEN', 'AMBER', 'RED'];
-    const normalizedTlp = (tlp || 'AMBER').toUpperCase();
+    const normalizedTlp = (typeof tlp === 'string' && tlp.trim() ? tlp.trim() : 'AMBER').toUpperCase();
     if (!validTlps.includes(normalizedTlp)) {
       return res.status(400).json({
         error: 'Bad Request',

@@ -11,12 +11,12 @@ permissions:
 
 jobs:
   secure-build:
-    name: Phase 11: Secure Development Controls
+    name: Phase 14: Secure CI/CD Pipeline & Automated Security Testing
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository Source
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -30,26 +30,40 @@ jobs:
       - name: Install Dependencies (Reproducible Clean Install)
         run: npm ci
 
-      - name: Control 1: Secret Detection & Anti-Hardcoding Audit
+      - name: Stage 1: Secret Detection & Anti-Hardcoding Audit
         run: node scripts/detect-secrets.js
 
-      - name: Control 2: Dependency Security Vulnerability Audit
-        run: npm audit --audit-level=critical || true
-
-      - name: Control 3: Static Application Security Testing (SAST)
+      - name: Stage 2: Static Application Security Testing (SAST)
         run: node scripts/security-scan.js
 
-      - name: Control 4: Automated Security Regression & Unit Testing
+      - name: Stage 3: Dependency Security Vulnerability Audit
+        run: npm audit --audit-level=critical || true
+
+      - name: Stage 4: Automated Unit & Integration Testing
         run: npm test
 
-      - name: Control 5: Cryptographic Audit Hash Chain Verification
+      - name: Stage 5: End-to-End Realistic CTI Workflow Testing
+        run: npm run test:e2e
+
+      - name: Stage 6: Security Vulnerability Regression Suite (V01-V06)
+        run: npm run test:vuln
+
+      - name: Stage 7: Application-Level Security Fuzz Testing
+        run: node scripts/fuzz-security.js
+
+      - name: Stage 8: Cryptographic Audit Hash-Chain Verification
         run: node scripts/verify-audit-chain.js
 
-      - name: Control 6: Build Artifact Integrity & Reproducibility Seal
+      - name: Stage 9: Container Hardening & Kubernetes Deployment Validation
+        run: node scripts/validate-deployment.js
+
+      - name: Stage 10: Build Artifact Integrity & Reproducibility Seal
         run: node scripts/generate-build-manifest.js
 
-      - name: Archive Build Manifest Artifact
+      - name: Archive Build Manifest & Fuzzing Evidence
         uses: actions/upload-artifact@v4
         with:
-          name: build-manifest
-          path: build-manifest.json
+          name: phase14-build-artifacts
+          path: |
+            build-manifest.json
+            evidence/fuzz_execution_results.json

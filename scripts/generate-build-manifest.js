@@ -14,7 +14,7 @@ const { execSync } = require('child_process');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUTPUT_FILE = path.join(REPO_ROOT, 'build-manifest.json');
 
-const TARGET_PATHS = ['src', 'scripts', 'k8s', 'package.json', 'package-lock.json', '.env.example'];
+const TARGET_PATHS = ['src', 'scripts', 'k8s', 'package.json', 'package-lock.json', '.env.example', 'Dockerfile', '.dockerignore'];
 
 function hashFile(filePath) {
   const fileBuffer = fs.readFileSync(filePath);
