@@ -2,9 +2,7 @@
 **Course:** 24CYS401 – Secure Software Engineering  
 **System:** Topic 29 – Cyber Threat Intelligence (CTI) Sharing Platform  
 
----
-
-## 1. Asset Identification and CIA Classification
+## 1. Asset Identification and CIA Classification (9 Primary Assets)
 
 | Asset ID | Asset Name & Scope | Confidentiality (C) | Integrity (I) | Availability (A) | CIA Justification |
 | :---: | :--- | :---: | :---: | :---: | :--- |
@@ -14,8 +12,9 @@
 | **AST-04** | **Confidential TLP:RED Incident Reports** | **CRITICAL** | **HIGH** | **HIGH** | Contains sensitive victim attribution and zero-day exploitation details. |
 | **AST-05** | **Published STIX 2.1 Threat Feeds** | **MEDIUM** | **CRITICAL** | **CRITICAL** | Consumed directly by automated firewalls, SOAR, and SIEMs for active blocking. |
 | **AST-06** | **JWT Signing Secret Key** | **CRITICAL** | **CRITICAL** | **MEDIUM** | Compromise permits universal token forgery and total platform takeover. |
-| **AST-07** | **Tamper-Evident SHA-256 Audit Trail** | **MEDIUM** | **CRITICAL** | **HIGH** | Required for post-incident forensics and regulatory compliance; must detect alterations. |
+| **AST-07** | **Tamper-Evident SHA-256 Audit Trail** | **MEDIUM** | **CRITICAL** | **HIGH** | Required for post-incident forensics and regulatory compliance; must detect alterations. Cryptographic SHA-256 hash chaining provides tamper-evident integrity verification of audit records and allows unauthorized modification of the chain to be detected during verification. |
 | **AST-08** | **Container Environment & Local SQLite File** | **HIGH** | **CRITICAL** | **CRITICAL** | Underlying OS execution context and database storage files. |
+| **AST-09** | **Analyst Triage & Review Decision Logs (`review_logs`)** | **HIGH** | **CRITICAL** | **HIGH** | Contains analyst vetting rationales, false-positive assessments, and MITRE ATT&CK mappings; tampering conceals rogue approvals. |
 
 ---
 
@@ -54,35 +53,48 @@
 
 ## 4. Concrete Vulnerabilities Analysis
 
-To maintain scientific integrity, vulnerabilities are categorized by their real operational status:
+To maintain scientific integrity and adhere to exam standards, all analyzed vulnerabilities are strictly classified into one of three operational states:
 
-1. **`VULN-01` (Demonstrated in Phase 12 - ReDoS Vulnerability):**
-   * *Status:* Implemented in `src/vulnerable/` and remediated in `src/services/iocValidator.js`.
+### Category A: Vulnerability Demonstrated in a Controlled Test
+1. **`VULN-01` (Regular Expression Denial of Service - ReDoS):**
+   * *Status:* **Vulnerability demonstrated in a controlled test** (implemented in isolated test harness `src/vulnerable/vulnerableValidator.js` and benchmarked under Phase 12).
    * *Description:* Unanchored regular expression in initial URL/domain parser vulnerable to catastrophic backtracking when fed long strings of repetitive dots.
-   * *Impact:* 100% CPU lockup on single-threaded Node.js event loop.
-   * *Remediation:* Replaced with anchored non-backtracking RFC-compliant regex with bounded length check.
-2. **`VULN-02` (Mitigated - Broken Object-Level Authorization / Missing RBAC):**
-   * *Status:* Mitigated by `rbacGuard.js`.
-   * *Description:* Direct API query to analyst triage endpoints without verifying the `ROLE_ANALYST` claim.
+   * *Impact:* 100% CPU lockup on single-threaded Node.js event loop during test demonstration.
+   * *Remediation Status:* Completely mitigated in production `src/services/iocValidator.js` using anchored, bounded regex ($<253$ characters).
+
+### Category B: Vulnerability Mitigated by an Implemented Security Control
+2. **`VULN-02` (Broken Object-Level Authorization / Missing RBAC on Triage):**
+   * *Status:* **Vulnerability mitigated by an implemented security control** (`src/middleware/rbacGuard.js`).
+   * *Description:* Direct API `PUT` query to analyst triage endpoints without verifying user role claims.
    * *Impact:* Unauthorized self-approval of threat intelligence by contributors.
-   * *Remediation:* Centralized `rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN'])` returning HTTP 403 Forbidden.
-3. **`VULN-03` (Mitigated - Insecure Direct Object Reference on TLP:RED Intelligence):**
-   * *Status:* Mitigated by `canAccessTLP` in `tlpGuard.js`.
+   * *Remediation Control:* Centralized `rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN'])` returning HTTP 403 Forbidden with automated regression testing.
+3. **`VULN-03` (Broken TLP Authorization / Insecure Direct Object Reference):**
+   * *Status:* **Vulnerability mitigated by an implemented security control** (`src/middleware/tlpGuard.js`).
    * *Description:* Feed distribution endpoint omitting server-side TLP checks, exposing classified victim telemetry to general subscribers.
    * *Impact:* Unauthorized information disclosure of proprietary victim infrastructure.
-   * *Remediation:* Explicit `canAccessTLP(user, indicator)` policy filtering all records before STIX serialization.
-4. **`VULN-04` (Mitigated - Stored Cross-Site Scripting in Threat Reports):**
-   * *Status:* Mitigated by `reportController.js`.
-   * *Description:* Rendering user-submitted Markdown reports containing embedded raw `<script>` tags.
-   * *Impact:* Session token theft from reviewing security analysts.
-   * *Remediation:* Server-side regex sanitization stripping script tags and dangerous HTML attributes.
-5. **`VULN-05` (Mitigated - Audit Trail Retroactive Modification):**
-   * *Status:* Mitigated by `AuditService.js`.
-   * *Description:* Malicious insider directly executing SQL `UPDATE` or `DELETE` on log tables to erase forensic evidence.
-   * *Impact:* Compromised incident investigation and loss of audit integrity.
-   * *Remediation:* Continuous SHA-256 hash chaining; `verifyAuditChain()` flags any altered row.
-6. **`VULN-06` (Mitigated - Credential Stuffing & Brute Force):**
-   * *Status:* Mitigated by `rateLimiter.js` and `totpService.js`.
+   * *Remediation Control:* Explicit `canAccessTLP(user, indicator)` policy filtering all records before STIX serialization and returning 403 on direct report queries.
+4. **`VULN-04` (Stored Cross-Site Scripting in Incident Reports):**
+   * *Status:* **Vulnerability mitigated by an implemented security control** (`src/controllers/reportController.js`).
+   * *Description:* Rendering user-submitted Markdown reports containing embedded raw `<script>` tags or malicious event handlers.
+   * *Impact:* Session token theft from reviewing security analysts in the browser.
+   * *Remediation Control:* Server-side HTML sanitization regex stripping `<script>` tags and dangerous attributes prior to database persistence.
+5. **`VULN-05` (Audit Trail Retroactive Modification / Tampering):**
+   * *Status:* **Vulnerability mitigated by an implemented security control** (`src/services/auditService.js`).
+   * *Description:* Malicious insider or compromised account directly executing SQL `UPDATE` or `DELETE` on log tables to erase forensic evidence.
+   * *Impact:* Inability to conduct post-incident forensics.
+   * *Remediation Control:* Cryptographic SHA-256 hash chaining provides tamper-evident integrity verification of audit records and allows unauthorized modification of the chain to be detected during verification.
+6. **`VULN-06` (Credential Stuffing & Authentication Brute-Force):**
+   * *Status:* **Vulnerability mitigated by an implemented security control** (`src/middleware/rateLimiter.js` & `src/services/totpService.js`).
    * *Description:* Rapid automated password guessing on authentication endpoints.
-   * *Impact:* Account takeover.
-   * *Remediation:* Mandatory RFC 6238 TOTP MFA combined with strict IP rate limiting (5 req/min).
+   * *Impact:* Analyst or administrator account takeover.
+   * *Remediation Control:* Mandatory RFC 6238 TOTP MFA combined with strict IP rate limiting (5 req/min) and salted bcrypt hashing (work factor 10).
+
+### Category C: Identified Potential Vulnerabilities
+7. **`VULN-07` (Third-Party Dependency Supply Chain Risk):**
+   * *Status:* **Identified potential vulnerability** (tracked for continuous dependency scanning).
+   * *Description:* Transitive dependencies in `node_modules` potentially introducing known CVEs over time.
+   * *Proposed Control:* Automated `npm audit` scanning in CI/CD pipeline and package-lock hash pinning.
+8. **`VULN-08` (Insecure TLS / Cleartext Egress at Ingress Boundary):**
+   * *Status:* **Identified potential vulnerability** (managed at perimeter infrastructure layer).
+   * *Description:* Reverse proxy or load balancer misconfiguration failing to enforce TLS 1.3 or HSTS headers.
+   * *Proposed Control:* Kubernetes Ingress controller enforcing TLS termination, HSTS `max-age=31536000`, and modern cipher suites./min).

@@ -159,7 +159,7 @@ Access is governed strictly by the explicit policy function:
 * Every audit entry computes:
   $$\text{current\_record\_hash} = \text{SHA256}(\text{prev\_record\_hash} \parallel \text{user\_id} \parallel \text{event\_type} \parallel \text{action\_details} \parallel \text{timestamp})$$
 * The first record anchors to a known Genesis Hash (`0000000000000000000000000000000000000000000000000000000000000000`).
-* **Security Purpose:** The hash chain provides tamper-evident integrity verification of audit records. Any out-of-band database update (row insertion, deletion, or modification) invalidates the continuous hash chain and is immediately flagged by the integrity verification routine.
+* **Security Purpose:** Cryptographic SHA-256 hash chaining provides tamper-evident integrity verification of audit records and allows unauthorized modification of the chain to be detected during verification. Any out-of-band database update (row insertion, deletion, or modification) invalidates the continuous hash chain and is immediately flagged by the integrity verification routine.
 
 ---
 
@@ -178,49 +178,67 @@ Access is governed strictly by the explicit policy function:
 | **CTI-106** | `CTI-8` | Analyst Triage | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 | DONE |
 | **CTI-107** | `CTI-9` | TLP Classification & Access Control | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 | DONE |
 | **CTI-108** | `CTI-10` | STIX 2.1 Feed | EP04: Threat Dissemination | High | 3 SP | Sprint 2 | DONE |
-| **CTI-109** | `CTI-11` | Tamper-Evident Audit Trail | EP05: Security Governance | High | 5 SP | Sprint 2 | IN PROGRESS |
-| **CTI-110** | `CTI-12` | Security Metrics & Monitoring | EP05: Security Governance | Medium | 3 SP | Sprint 2 | TO DO |
+| **CTI-109** | `CTI-11` | Tamper-Evident Audit Trail | EP05: Security Governance | High | 5 SP | Sprint 2 | DONE |
+| **CTI-110** | `CTI-12` | Security Metrics & Monitoring | EP05: Security Governance | Medium | 3 SP | Sprint 2 | DONE |
 
 ---
 
-## 9. STRIDE Threat Model & Attack Tree (Exfiltration Goal)
+## 10. STRIDE Threat Model & Attack Tree (Exfiltration Goal)
 
-### Assets (8):
-1. User Credentials & Password Hashes
-2. Organization Provenance & Trust Levels
-3. Raw Unfiltered IoCs
-4. Confidential `TLP:RED` Incident Reports
-5. Published STIX 2.1 Threat Feeds
-6. JWT Cryptographic Secrets
-7. Audit Log Records
-8. Container Environment & Filesystem
+### Assets (9 Identified Assets with CIA Classification):
+1. **AST-01 (User Credentials & MFA Secrets):** Confidentiality: CRITICAL, Integrity: HIGH, Availability: MEDIUM.
+2. **AST-02 (Organization Provenance & Trust Levels):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: MEDIUM.
+3. **AST-03 (Raw Ingested Threat Observables - IoCs):** Confidentiality: LOW, Integrity: CRITICAL, Availability: HIGH.
+4. **AST-04 (Confidential TLP:RED Incident Reports):** Confidentiality: CRITICAL, Integrity: HIGH, Availability: HIGH.
+5. **AST-05 (Published STIX 2.1 Threat Feeds):** Confidentiality: MEDIUM, Integrity: CRITICAL, Availability: CRITICAL.
+6. **AST-06 (JWT Signing Secret Key):** Confidentiality: CRITICAL, Integrity: CRITICAL, Availability: MEDIUM.
+7. **AST-07 (Tamper-Evident SHA-256 Audit Trail):** Confidentiality: MEDIUM, Integrity: CRITICAL, Availability: HIGH.
+8. **AST-08 (Container Environment & Local SQLite File):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: CRITICAL.
+9. **AST-09 (Analyst Triage & Review Decision Logs - `review_logs`):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: HIGH.
 
-### Primary Attack Tree: Exfiltrate Confidential `TLP:RED` Intelligence
+### Primary Attack Tree: Exfiltrate Confidential TLP:RED Threat Intelligence
 ```
-                       [ Exfiltrate TLP:RED Threat Intelligence ]
-                                          │
-                 ┌────────────────────────┴────────────────────────┐
-                 │ (OR)                                            │ (OR)
-     [ 1. Compromise Analyst Account ]                 [ 2. Exploit API Access ]
-                 │                                                 │
-         ┌───────┴───────┐                                 ┌───────┴───────┐
-         │ (AND)         │ (AND)                           │ (OR)          │ (OR)
-   [ 1.1 Brute-Force]  [ 1.2 Bypass/  ]              [ 2.1 IDOR on  ] [ 2.2 Missing/ ]
-   [ Credentials   ]  [ Phish MFA    ]              [ Report API   ] [ Broken TLP  ]
-         │                   │                             │         [ Authorization]
-    Preventive:         Preventive:                   Preventive:          │
-    bcrypt (10 rounds), Time-window TOTP,             Strict Object   Preventive:
-    IP Rate Limiting    Single-use tokens             Ownership check Explicit canAccessTLP
-    Detective:          Detective:                    Detective:      policy function
-    Failed login alerts Failed MFA alert              403 Violation   Detective:
-    in Audit Chain      in Audit Chain                Audit Alert     Audit violation log
+ROOT
+└── Exfiltrate Confidential TLP:RED Threat Intelligence
+    ├── OR: Compromise Analyst Account
+    │   └── AND: Credential Hijack & MFA Bypass
+    │       ├── Credential compromise
+    │       └── MFA/session weakness
+    │
+    └── OR: Exploit API Access
+        ├── IDOR / broken object authorization
+        └── Broken TLP authorization
 ```
-*(Note: ReDoS is modeled separately as a Denial of Service attack on input parsing, not an exfiltration path).*
+
+### Attack Path Mapping: Attack $\rightarrow$ STRIDE Threat $\rightarrow$ Vulnerability $\rightarrow$ Control
+* **Compromise Analyst Account $\rightarrow$ Credential compromise:** `T01 (Spoofing)` $\rightarrow$ `VULN-06` (Credential Stuffing & Brute Force) $\rightarrow$ Salted bcrypt hashing (10 rounds) + 5 req/min rate limiter (`authLimiter`).
+* **Compromise Analyst Account $\rightarrow$ MFA/session weakness:** `T01 (Spoofing)` $\rightarrow$ `VULN-06` (MFA Enforcement) $\rightarrow$ RFC 6238 TOTP single-use code verification + 5-minute temporary MFA token.
+* **Exploit API Access $\rightarrow$ IDOR / broken object authorization:** `T04 (Information Disclosure)` $\rightarrow$ `VULN-03` (IDOR on Report API) $\rightarrow$ Organization ownership validation in `reportController.js` (`user.org_id === report.org_id`).
+* **Exploit API Access $\rightarrow$ Broken TLP authorization:** `T04 (Information Disclosure)` $\rightarrow$ `VULN-03` (Broken TLP Authorization) $\rightarrow$ Explicit server-side ABAC policy function `canAccessTLP` in `tlpGuard.js`.
 
 ---
 
-## 9. Kubernetes & Container Hardening Principles
+## 11. Kubernetes & Container Hardening Principles
 * **Replicas:** Exactly `1` (guarantees SQLite write consistency without network lock corruption).
 * **Root Filesystem:** Read-only (`readOnlyRootFilesystem: true`).
 * **Volume Mount:** Dedicated writable volume (`emptyDir`) mounted strictly at `/app/data` for the SQLite database. Documented as suitable for lab demonstration, with persistent storage class (PVC) specified for production.
 * **Privilege:** `runAsNonRoot: true`, `runAsUser: 10001`, `allowPrivilegeEscalation: false`, `capabilities: drop: ["ALL"]`.
+
+---
+
+## 12. Complete 11-Stage Traceability Thread
+
+Requirement $\rightarrow$ Use Case $\rightarrow$ Asset $\rightarrow$ DFD Flow $\rightarrow$ STRIDE Threat $\rightarrow$ Vulnerability $\rightarrow$ Attack Tree $\rightarrow$ Jira Story $\rightarrow$ Implementation $\rightarrow$ Test $\rightarrow$ Deployment Control
+
+1. **Requirement:** `REQ-SEC-04` (Traffic Light Protocol Enforcement)
+2. **Use Case:** `UC-02` (Review & Classify Threat Intelligence with TLP)
+3. **Asset:** `AST-04` (Confidential TLP:RED Incident Reports)
+4. **DFD Flow:** `Process 3.0` / `Flow 3` (Classified Threat Feed Egress Flow)
+5. **STRIDE Threat:** `T04` (Information Disclosure: Unauthorized Egress of TLP:RED Intelligence)
+6. **Vulnerability:** `VULN-03` (Broken TLP Authorization / IDOR)
+7. **Attack Tree:** Root Goal $\rightarrow$ Exploit API Access $\rightarrow$ Broken TLP authorization
+8. **Jira Story:** `CTI-107` / Actual Jira Key `CTI-9` (TLP Classification & Access Control)
+9. **Implementation:** `src/middleware/tlpGuard.js` (`canAccessTLP` policy function)
+10. **Test:** `tests/integration/tlpAccess.test.js` (Asserting 403 and feed egress filtering)
+11. **Deployment Control:** `k8s/deployment.yaml` (`readOnlyRootFilesystem: true`, non-root user UID 10001, drop ALL capabilities)
+

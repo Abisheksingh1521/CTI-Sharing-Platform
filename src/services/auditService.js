@@ -16,10 +16,17 @@ class AuditService {
     return crypto.createHash('sha256').update(rawPayload).digest('hex');
   }
 
+  static logQueue = Promise.resolve();
+
   /**
    * Log a security event and link it cryptographically to the preceding record
    */
-  static async logEvent({ userId = null, eventType, ipAddress = '127.0.0.1', resourceId = null, actionDetails }) {
+  static logEvent(eventData) {
+    this.logQueue = this.logQueue.then(() => this._insertLog(eventData));
+    return this.logQueue;
+  }
+
+  static async _insertLog({ userId = null, eventType, ipAddress = '127.0.0.1', resourceId = null, actionDetails }) {
     const id = 'audit-' + crypto.randomUUID();
     const timestamp = new Date().toISOString();
 

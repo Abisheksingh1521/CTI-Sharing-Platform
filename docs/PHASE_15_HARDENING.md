@@ -15,7 +15,7 @@ The platform records security events into the **Tamper-Evident SHA-256 Hash-Chai
 | `AUTH_CREDENTIALS_VERIFIED` | Password verified; MFA token issued | User UUID, Username, Source IP | Tracks successful first factor completion. |
 | `AUTH_MFA_FAILED` | Invalid or expired TOTP code submitted | User UUID, Source IP, Timestamp | Identifies potential second-factor bypass attempts. |
 | `AUTH_LOGIN_SUCCESS` | Full MFA authentication completed | User UUID, Role, Org ID, Source IP | Establishes authenticated session origin. |
-| `IOC_SUBMITTED` | Contributor ingests new observable | Indicator UUID, Type, Defanged Value, TLP | Ensures non-repudiation of submitted threat data. |
+| `IOC_SUBMITTED` | Contributor ingests new observable | Indicator UUID, Type, Defanged Value, TLP | Ensures tamper-evident provenance and attribution of submitted threat data. |
 | `IOC_DUPLICATE_SIGHTING` | Identical observable submitted | Indicator UUID, Submitter User, Source IP | Correlates community sightings without DB bloat. |
 | `IOC_TRIAGE_APPROVED` | Analyst approves indicator | Indicator UUID, Analyst UUID, Assigned TLP, Score, Justification | Establishes accountability for published intelligence. |
 | `IOC_TRIAGE_REJECTED` | Analyst rejects indicator | Indicator UUID, Analyst UUID, Justification | Documents false-positive elimination. |
