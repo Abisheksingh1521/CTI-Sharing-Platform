@@ -27,4 +27,5 @@ Thumbs.db
 
 # Exam source documents
 *.docx
+!CTI_Sharing_Platform_Phase_01_to_10.docx
 question.jpeg

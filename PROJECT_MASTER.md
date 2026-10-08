@@ -185,36 +185,40 @@ Access is governed strictly by the explicit policy function:
 
 ## 10. STRIDE Threat Model & Attack Tree (Exfiltration Goal)
 
-### Assets (9 Identified Assets with CIA Classification):
-1. **AST-01 (User Credentials & MFA Secrets):** Confidentiality: CRITICAL, Integrity: HIGH, Availability: MEDIUM.
-2. **AST-02 (Organization Provenance & Trust Levels):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: MEDIUM.
-3. **AST-03 (Raw Ingested Threat Observables - IoCs):** Confidentiality: LOW, Integrity: CRITICAL, Availability: HIGH.
-4. **AST-04 (Confidential TLP:RED Incident Reports):** Confidentiality: CRITICAL, Integrity: HIGH, Availability: HIGH.
-5. **AST-05 (Published STIX 2.1 Threat Feeds):** Confidentiality: MEDIUM, Integrity: CRITICAL, Availability: CRITICAL.
-6. **AST-06 (JWT Signing Secret Key):** Confidentiality: CRITICAL, Integrity: CRITICAL, Availability: MEDIUM.
-7. **AST-07 (Tamper-Evident SHA-256 Audit Trail):** Confidentiality: MEDIUM, Integrity: CRITICAL, Availability: HIGH.
-8. **AST-08 (Container Environment & Local SQLite File):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: CRITICAL.
-9. **AST-09 (Analyst Triage & Review Decision Logs - `review_logs`):** Confidentiality: HIGH, Integrity: CRITICAL, Availability: HIGH.
+### Assets (9 Identified Assets with CIA Classification - Authoritative Baseline):
+1. **A01 (User Credentials):** Confidentiality: High, Integrity: High, Availability: Medium.
+2. **A02 (TOTP MFA Secrets):** Confidentiality: High, Integrity: High, Availability: Medium.
+3. **A03 (JWT Access Tokens):** Confidentiality: High, Integrity: High, Availability: Medium.
+4. **A04 (Threat Indicators / IoCs):** Confidentiality: Medium, Integrity: High, Availability: High.
+5. **A05 (Threat Reports):** Confidentiality: High, Integrity: High, Availability: High.
+6. **A06 (TLP Classification Metadata):** Confidentiality: High, Integrity: High, Availability: High.
+7. **A07 (Audit Logs):** Confidentiality: High, Integrity: High, Availability: Medium.
+8. **A08 (STIX 2.1 Threat Feed):** Confidentiality: High, Integrity: High, Availability: High.
+9. **A09 (Organization & User Data):** Confidentiality: High, Integrity: High, Availability: Medium.
 
 ### Primary Attack Tree: Exfiltrate Confidential TLP:RED Threat Intelligence
 ```
-ROOT
-└── Exfiltrate Confidential TLP:RED Threat Intelligence
-    ├── OR: Compromise Analyst Account
-    │   └── AND: Credential Hijack & MFA Bypass
-    │       ├── Credential compromise
-    │       └── MFA/session weakness
+ROOT: Exfiltrate Confidential TLP:RED Threat Intelligence
+│
+├── [OR] Branch A: Compromise Analyst Account
+│   │
+│   └── [AND] Credential Hijack & MFA/Session Bypass
+│       ├── [Leaf A1] Credential Compromise (Brute-Force / Credential Stuffing)
+│       └── [Leaf A2] Session / MFA Weakness (TOTP Bypass / Session Hijacking)
+│
+└── [OR] Branch B: Exploit CTI API Access
     │
-    └── OR: Exploit API Access
-        ├── IDOR / broken object authorization
-        └── Broken TLP authorization
+    ├── [Leaf B1] Broken Object-Level Authorization / IDOR (Direct report UUID query)
+    ├── [Leaf B2] Broken TLP Authorization (Bypassing TLP rating check on indicators)
+    └── [Leaf B3] Unauthorized STIX Feed Access (Egress scraping of classified feeds)
 ```
 
-### Attack Path Mapping: Attack $\rightarrow$ STRIDE Threat $\rightarrow$ Vulnerability $\rightarrow$ Control
-* **Compromise Analyst Account $\rightarrow$ Credential compromise:** `T01 (Spoofing)` $\rightarrow$ `VULN-06` (Credential Stuffing & Brute Force) $\rightarrow$ Salted bcrypt hashing (10 rounds) + 5 req/min rate limiter (`authLimiter`).
-* **Compromise Analyst Account $\rightarrow$ MFA/session weakness:** `T01 (Spoofing)` $\rightarrow$ `VULN-06` (MFA Enforcement) $\rightarrow$ RFC 6238 TOTP single-use code verification + 5-minute temporary MFA token.
-* **Exploit API Access $\rightarrow$ IDOR / broken object authorization:** `T04 (Information Disclosure)` $\rightarrow$ `VULN-03` (IDOR on Report API) $\rightarrow$ Organization ownership validation in `reportController.js` (`user.org_id === report.org_id`).
-* **Exploit API Access $\rightarrow$ Broken TLP authorization:** `T04 (Information Disclosure)` $\rightarrow$ `VULN-03` (Broken TLP Authorization) $\rightarrow$ Explicit server-side ABAC policy function `canAccessTLP` in `tlpGuard.js`.
+### Attack Path Mapping: Attack $\rightarrow$ Target Asset $\rightarrow$ STRIDE Threat $\rightarrow$ Vulnerability $\rightarrow$ Control
+* **Branch A $\rightarrow$ Leaf A1 (Credential Compromise):** Target: **A01** $\rightarrow$ `T01 (Spoofing)` $\rightarrow$ `V01` (Credential compromise / CWE-798) $\rightarrow$ Salted bcrypt hashing (10 rounds) + 5 req/min rate limiter (`authLimiter`).
+* **Branch A $\rightarrow$ Leaf A2 (Session / MFA Weakness):** Target: **A02, A03** $\rightarrow$ `T01 (Spoofing)` $\rightarrow$ `V01` (Credential compromise / CWE-798) $\rightarrow$ RFC 6238 TOTP single-use code verification + 5-minute temporary MFA token.
+* **Branch B $\rightarrow$ Leaf B1 (Broken Object-Level Auth / IDOR):** Target: **A05** $\rightarrow$ `T04 (Information Disclosure)` $\rightarrow$ `V02` (Broken access control / CWE-639) $\rightarrow$ Organization ownership validation in `reportController.js` (`user.org_id === report.org_id`).
+* **Branch B $\rightarrow$ Leaf B2 (Broken TLP Authorization):** Target: **A06** $\rightarrow$ `T04 (Information Disclosure)` $\rightarrow$ `V02` (Broken access control / CWE-639) $\rightarrow$ Explicit server-side ABAC policy function `canAccessTLP` in `tlpGuard.js`.
+* **Branch B $\rightarrow$ Leaf B3 (Unauthorized STIX Feed Access):** Target: **A08** $\rightarrow$ `T08 (Information Disclosure)` $\rightarrow$ `V02` (TLP filtering failure / CWE-639) $\rightarrow$ Server-side TLP egress filtering before STIX 2.1 serialization.
 
 ---
 
@@ -232,13 +236,14 @@ Requirement $\rightarrow$ Use Case $\rightarrow$ Asset $\rightarrow$ DFD Flow $\
 
 1. **Requirement:** `REQ-SEC-04` (Traffic Light Protocol Enforcement)
 2. **Use Case:** `UC-02` (Review & Classify Threat Intelligence with TLP)
-3. **Asset:** `AST-04` (Confidential TLP:RED Incident Reports)
-4. **DFD Flow:** `Process 3.0` / `Flow 3` (Classified Threat Feed Egress Flow)
-5. **STRIDE Threat:** `T04` (Information Disclosure: Unauthorized Egress of TLP:RED Intelligence)
-6. **Vulnerability:** `VULN-03` (Broken TLP Authorization / IDOR)
-7. **Attack Tree:** Root Goal $\rightarrow$ Exploit API Access $\rightarrow$ Broken TLP authorization
+3. **Asset:** `A06` (TLP Classification Metadata) / `A05` (Threat Reports)
+4. **DFD Flow:** `IF-03` / `Process 3.0` (Threat Feed Egress Flow)
+5. **STRIDE Threat:** `T04` / `T08` (Information Disclosure: Unauthorized Egress of TLP:RED Intelligence)
+6. **Vulnerability:** `V02` (Broken access control / IDOR / TLP failure)
+7. **Attack Tree:** Root Goal $\rightarrow$ Branch B $\rightarrow$ Leaf B2 (Broken TLP Authorization)
 8. **Jira Story:** `CTI-107` / Actual Jira Key `CTI-9` (TLP Classification & Access Control)
 9. **Implementation:** `src/middleware/tlpGuard.js` (`canAccessTLP` policy function)
 10. **Test:** `tests/integration/tlpAccess.test.js` (Asserting 403 and feed egress filtering)
 11. **Deployment Control:** `k8s/deployment.yaml` (`readOnlyRootFilesystem: true`, non-root user UID 10001, drop ALL capabilities)
+
 
