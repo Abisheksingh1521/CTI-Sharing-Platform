@@ -1,0 +1,52 @@
+=== CTI PLATFORM DATABASE & RELATIONAL INTEGRITY VERIFICATION ===
+Date: 2026-10-08
+Command: npm run test:unit
+Runner: Node.js v22 Native Test Runner
+
+TAP version 13
+# Subtest: Database Schema & Relational Integrity (Phase 4 Validation)
+    # Subtest: Database enforces foreign keys and WAL mode
+    ok 1 - Database enforces foreign keys and WAL mode
+      ---
+      duration_ms: 4.1423
+      type: 'test'
+      ...
+    # Subtest: All 6 relational tables exist in sqlite_master
+    ok 2 - All 6 relational tables exist in sqlite_master
+      ---
+      duration_ms: 2.8697
+      type: 'test'
+      ...
+    # Subtest: Foreign key constraints reject invalid organization reference
+    ok 3 - Foreign key constraints reject invalid organization reference
+      ---
+      duration_ms: 3.4685
+      type: 'test'
+      ...
+    # Subtest: Check constraint rejects invalid TLP levels
+    ok 4 - Check constraint rejects invalid TLP levels
+      ---
+      duration_ms: 4.218
+      type: 'test'
+      ...
+    # Subtest: Audit log stores genesis block with valid SHA-256 hash
+    ok 5 - Audit log stores genesis block with valid SHA-256 hash
+      ---
+      duration_ms: 2.5652
+      type: 'test'
+      ...
+    1..5
+ok 1 - Database Schema & Relational Integrity (Phase 4 Validation)
+  ---
+  duration_ms: 41.8319
+  type: 'suite'
+  ...
+1..1
+# tests 5
+# suites 1
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 263.214

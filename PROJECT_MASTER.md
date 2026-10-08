@@ -154,7 +154,27 @@ Access is governed strictly by the explicit policy function:
 
 ---
 
-## 8. STRIDE Threat Model & Attack Tree (Exfiltration Goal)
+## 8. Standardized Jira Scrum Backlog
+
+**Project:** Cyber Threat Intelligence Sharing Platform  
+**Total Story Points:** 44 SP (Sprint 1: 23 SP, Sprint 2: 21 SP)
+
+| Story ID | Summary | Epic | Priority | Story Points | Sprint |
+| :---: | :--- | :--- | :---: | :---: | :---: |
+| **CTI-101** | User Authentication & TOTP MFA | EP01: Identity & Access | Highest | 5 SP | Sprint 1 |
+| **CTI-102** | RBAC Authorization | EP01: Identity & Access | Highest | 3 SP | Sprint 1 |
+| **CTI-103** | IoC Ingestion API | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 |
+| **CTI-104** | IoC Validation & Defanging | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 |
+| **CTI-105** | Threat Report Submission | EP02: Ingestion & Parsing | High | 5 SP | Sprint 1 |
+| **CTI-106** | Analyst Triage | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 |
+| **CTI-107** | TLP Classification & Access Control | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 |
+| **CTI-108** | STIX 2.1 Feed | EP04: Threat Dissemination | High | 3 SP | Sprint 2 |
+| **CTI-109** | Tamper-Evident Audit Trail | EP05: Security Governance | High | 5 SP | Sprint 2 |
+| **CTI-110** | Security Metrics & Monitoring | EP05: Security Governance | Medium | 3 SP | Sprint 2 |
+
+---
+
+## 9. STRIDE Threat Model & Attack Tree (Exfiltration Goal)
 
 ### Assets (8):
 1. User Credentials & Password Hashes
