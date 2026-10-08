@@ -1,0 +1,26 @@
+=== CTI PLATFORM TAMPER-EVIDENT AUDIT & PROMETHEUS METRICS TESTS ===
+Date: 2026-10-08
+Command: npm test
+Supported Stories: CTI-109 (Tamper-Evident Audit Trail), CTI-110 (Security Metrics & Monitoring)
+
+TAP version 13
+# Subtest: Integration Tests: Tamper-Evident Audit & Prometheus Metrics (CTI-109, CTI-110)
+    ok 1 - GET /api/audit rejects non-admin users with 403 Forbidden
+    ok 2 - GET /api/audit allows Platform Administrator and returns paginated records
+    ok 3 - GET /api/audit/verify returns status VERIFIED on clean audit trail
+    ok 4 - GET /metrics returns standard Prometheus formatted metrics including all 5 required gauges/counters
+    1..4
+ok 1 - Integration Tests: Tamper-Evident Audit & Prometheus Metrics (CTI-109, CTI-110)
+
+# Subtest: Unit Tests: Tamper-Evident SHA-256 Audit Chain Verification (CTI-109)
+    ok 1 - Valid Audit Log Chain returns valid: true with zero tampering detected
+    ok 2 - Deliberate out-of-band row tampering is detected by cryptographic hash mismatch
+    1..2
+ok 5 - Unit Tests: Tamper-Evident SHA-256 Audit Chain Verification (CTI-109)
+
+===========================================
+TOTAL TEST SUITES: 9
+TOTAL TESTS: 50
+PASSED: 50
+FAILED: 0
+===========================================

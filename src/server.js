@@ -13,6 +13,8 @@ const IoCController = require('./controllers/iocController');
 const ReportController = require('./controllers/reportController');
 const TriageController = require('./controllers/triageController');
 const FeedController = require('./controllers/feedController');
+const AuditController = require('./controllers/auditController');
+const MetricsService = require('./services/metricsService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +37,14 @@ app.use(cors());
 app.use(express.json({ limit: '100kb' })); // Mitigate DoS via large payloads
 app.use(express.urlencoded({ extended: false, limit: '100kb' }));
 
+// Request Metrics Instrumentation
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    MetricsService.recordHttpRequest(req.method, res.statusCode);
+  });
+  next();
+});
+
 // Static frontend serving
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -49,6 +59,17 @@ app.get('/api/health', (req, res) => {
     service: 'cyber-threat-intelligence-platform',
     version: '1.0.0'
   });
+});
+
+// Prometheus Metrics Endpoint (CTI-110, Phase 15)
+app.get('/metrics', async (req, res) => {
+  try {
+    const metricsData = await MetricsService.generateMetrics();
+    res.setHeader('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+    return res.status(200).send(metricsData);
+  } catch (err) {
+    return res.status(500).send('# Error generating metrics');
+  }
 });
 
 // Authentication Routes (Guarded by strict auth rate limiter)
@@ -74,6 +95,10 @@ app.put('/api/iocs/:id/triage', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMI
 // STIX 2.1 Threat Feeds & Blocklist Routes (CTI-108)
 app.get('/api/feeds/stix', authGuard, FeedController.getSTIXFeed);
 app.get('/api/feeds/blocklist', authGuard, FeedController.getFirewallBlocklist);
+
+// Tamper-Evident Audit Log Routes (CTI-109, Admin-only)
+app.get('/api/audit', authGuard, rbacGuard(['ROLE_ADMIN']), AuditController.getAuditLogs);
+app.get('/api/audit/verify', authGuard, rbacGuard(['ROLE_ADMIN']), AuditController.verifyAuditChain);
 
 // RBAC Role Verification Test Endpoints
 app.get('/api/test/analyst-only', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN']), (req, res) => {
