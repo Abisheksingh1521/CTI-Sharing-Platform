@@ -251,7 +251,11 @@ def create_document():
         set_table_borders(table, color="000000", sz="4")
         
         # Header row
-        hdr_cells = table.rows[0].cells
+        hdr_row = table.rows[0]
+        hdr_trPr = hdr_row._tr.get_or_add_trPr()
+        hdr_trPr.append(parse_xml(f'<w:tblHeader {nsdecls("w")}/>'))
+        hdr_trPr.append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
+        hdr_cells = hdr_row.cells
         for i, title in enumerate(headers):
             hdr_cells[i].text = title
             set_cell_background(hdr_cells[i], "F1F5F9")
@@ -266,7 +270,10 @@ def create_document():
                 
         # Data rows
         for r_idx, row_values in enumerate(rows_data):
-            row_cells = table.add_row().cells
+            new_row = table.add_row()
+            row_trPr = new_row._tr.get_or_add_trPr()
+            row_trPr.append(parse_xml(f'<w:cantSplit {nsdecls("w")}/>'))
+            row_cells = new_row.cells
             bg_color = "F9FAFB" if r_idx % 2 == 1 else "FFFFFF"
             for c_idx, val in enumerate(row_values):
                 row_cells[c_idx].text = str(val)
@@ -1110,13 +1117,32 @@ def create_document():
     add_h1("11. Phase 10 – Scrum Execution, Burndown & Velocity Metrics")
     add_p("Scrum execution was measured using empirical agile metrics. All 10 user stories progressed through the four-state workflow: TODO -> IN PROGRESS -> TESTING -> DONE.")
 
-    add_h2("11.1 Daily Scrum Records (Sample Operational Standups)")
-    add_bullet(" Sprint 1, Day 3: Completed Bcrypt password salting and RFC 6238 TOTP generation. Identified need for clock drift tolerance (+/-30s) to accommodate mobile authenticators. Next: Build authGuard JWT verification middleware.", bold_prefix="Standup 1: ")
-    add_bullet(" Sprint 1, Day 7: Implemented Strategy Pattern IoC validator. Overcame ReDoS risk by replacing unanchored regex with bounded, non-backtracking patterns (<253 chars). Next: Threat report Markdown Stored-XSS sanitizer.", bold_prefix="Standup 2: ")
-    add_bullet(" Sprint 2, Day 4: Implemented canAccessTLP authorization policy function. Resolved edge case where consumers from the submitting org were mistakenly denied TLP:AMBER. Next: Server-side STIX 2.1 egress filtering.", bold_prefix="Standup 3: ")
-    add_bullet(" Sprint 2, Day 8: Integrated Tamper-Evident SHA-256 Hash-Chained Audit Log. Resolved async concurrency issue using in-process Promise serialization queue. Next: Prometheus metrics and verification API.", bold_prefix="Standup 4: ")
+    add_h2("10.1 Sprint Board")
+    add_p("The CTI Sharing Platform was developed under a two-week sprint cadence following empirical Scrum practices. Work items progressed across the four-state workflow: TODO -> IN PROGRESS -> TESTING -> DONE. All 10 committed user stories (CTI-1 through CTI-12 / CTI-101 through CTI-110) reached the DONE state, satisfying all acceptance criteria and passing all 53 automated unit and integration tests.")
+    add_placeholder_box(
+        "INSERT ACTUAL JIRA METRIC SCREENSHOT: SPRINT BURNDOWN & VELOCITY CHART",
+        "Captures the completed Jira Scrum board (all stories in DONE column) and the actual Sprint Burndown showing 0 remaining SP."
+    )
 
-    add_h2("11.2 Sprint Burndown Data & Chart Table")
+    add_h2("10.2 Daily Scrum")
+    add_p("The operational Daily Scrum was conducted across the 10-day sprint cycle to synchronize engineering progress, validate daily milestones, and eliminate impediments. The complete 10-day log is documented in the table below:")
+    p10_daily_scrum = [
+        ["Day", "Completed / Yesterday", "Planned / Today", "Blockers"],
+        ["Day 1", "Sprint backlog finalized; authentication and database tasks reviewed", "Implement authentication, MFA and database integration", "None"],
+        ["Day 2", "Database schema and seed data completed", "Complete JWT authentication, bcrypt password hashing and TOTP MFA", "None"],
+        ["Day 3", "Authentication and MFA implementation completed", "Implement RBAC, authorization middleware and rate limiting", "None"],
+        ["Day 4", "RBAC and security middleware completed", "Implement IoC validation, canonicalization and defanging", "None"],
+        ["Day 5", "IoC ingestion and validation completed", "Implement threat-report submission and sanitization", "None"],
+        ["Day 6", "Threat-report workflow completed", "Implement analyst triage and review logging", "None"],
+        ["Day 7", "Analyst review workflow completed", "Implement TLP authorization and server-side filtering", "None"],
+        ["Day 8", "TLP authorization completed", "Implement STIX 2.1 feed generation", "None"],
+        ["Day 9", "STIX feed and audit functionality completed", "Implement audit verification and Prometheus metrics", "None"],
+        ["Day 10", "Audit verification and metrics completed", "Execute security regression tests and finalize sprint evidence", "None"]
+    ]
+    add_table_data([Inches(0.8), Inches(2.3), Inches(2.6), Inches(0.8)], p10_daily_scrum[0], p10_daily_scrum[1:])
+
+    add_h2("10.3 Sprint Burndown")
+    add_p("Both Sprints 1 and 2 demonstrated steady burndown trajectories adhering to the planned linear burndown line, terminating at 0 remaining story points on Day 10 with zero carry-over debt:")
     p10_burndown = [
         ["Sprint Day", "Ideal Remaining (SP)", "Sprint 1 Actual (SP)", "Sprint 2 Actual (SP)", "Operational Milestone Completed"],
         ["Day 1", "23.0 SP / 21.0 SP", "23 SP Remaining", "21 SP Remaining", "Sprint Planning & Task Breakdown finalized."],
@@ -1126,25 +1152,64 @@ def create_document():
         ["Day 9", "4.6 SP / 4.2 SP", "5 SP Remaining", "3 SP Remaining", "Threat Reports (CTI-7) completed; Audit Hash Chain (CTI-11) verified."],
         ["Day 10", "0.0 SP / 0.0 SP", "0 SP (100% DONE)", "0 SP (100% DONE)", "Sprint Review & Demo: 53 automated tests passing; 0 defects."]
     ]
-    add_table_data([Inches(0.9), Inches(1.3), Inches(1.2), Inches(1.2), Inches(1.7)], p10_burndown[0], p10_burndown[1:])
+    add_table_data([Inches(0.9), Inches(1.3), Inches(1.2), Inches(1.2), Inches(1.9)], p10_burndown[0], p10_burndown[1:])
 
-    add_h2("11.3 Velocity and Defect Metrics")
+    add_h2("10.4 Velocity")
+    add_p("Velocity tracking demonstrates 100% delivery predictability against sprint commitments:")
     add_bullet(" Total Committed Velocity: 44 Story Points (Sprint 1: 23 SP, Sprint 2: 21 SP).", bold_prefix="•")
     add_bullet(" Total Completed Velocity: 44 Story Points (100% completion rate across both sprints).", bold_prefix="•")
     add_bullet(" Average Velocity: 22.0 Story Points per sprint.", bold_prefix="•")
+
+    add_h2("10.5 Defect / Carry-over Metrics")
+    add_p("Rigorous test automation and continuous integration prevented defect leakage between sprint boundaries:")
     add_bullet(" Carried-Over Defects: Zero (0) defects carried over between sprints.", bold_prefix="•")
     add_bullet(" Production Critical Defects: Zero (0) critical security defects.", bold_prefix="•")
+    add_bullet(" Defect Density: Zero post-release defects across all 18 API endpoints.", bold_prefix="•")
 
-    add_h2("11.4 Sprint Retrospective Summary")
-    add_bullet(" What Went Well: Early adoption of TDD resulted in 53 automated tests passing cleanly; Strategy Pattern made IoC validation modular; explicit canAccessTLP policy prevented access control ambiguities.", bold_prefix="•")
-    add_bullet(" What Could Be Improved: Initial regex patterns required benchmarking to guarantee ReDoS resilience; async hash-chaining needed serialization to handle concurrent traffic.", bold_prefix="•")
-    add_bullet(" Action Items: Maintain Promise serialization for audit logs; enforce automated linting and fuzz testing in CI/CD pipeline.", bold_prefix="•")
+    add_h2("10.6 Sprint Review")
+    add_h3("Sprint 1 — Secure Ingestion")
+    add_p("Deliver functional and secure CTI ingestion with authentication, authorization, validation and indicator defanging.", bold_prefix="Sprint Goal: ")
+    add_p("Completed outcomes:")
+    add_bullet(" Authentication with bcrypt and TOTP MFA")
+    add_bullet(" JWT-based session handling")
+    add_bullet(" RBAC and authorization controls")
+    add_bullet(" IoC ingestion and validation")
+    add_bullet(" Canonical defanging of indicators")
+    add_bullet(" Threat-report submission and sanitization")
+    add_bullet(" Automated security testing")
+    add_p("23/23 story points completed.", bold_prefix="Sprint result: ")
 
-    add_h2("11.5 Jira Scrum Board & Burndown Evidence")
-    add_placeholder_box(
-        "INSERT ACTUAL JIRA METRIC SCREENSHOT: SPRINT BURNDOWN & VELOCITY CHART",
-        "Captures the completed Jira Scrum board (all stories in DONE column) and the actual Sprint Burndown showing 0 remaining SP."
-    )
+    add_h3("Sprint 2 — Triage & Intelligence Distribution")
+    add_p("Implement analyst review, TLP enforcement, STIX distribution, tamper-evident auditing and security monitoring.", bold_prefix="Sprint Goal: ")
+    add_p("Completed outcomes:")
+    add_bullet(" Analyst triage and review workflow")
+    add_bullet(" TLP authorization")
+    add_bullet(" Server-side TLP filtering")
+    add_bullet(" STIX 2.1 threat feed")
+    add_bullet(" Tamper-evident SHA-256 hash-chained audit logging")
+    add_bullet(" Audit-chain verification")
+    add_bullet(" Prometheus security metrics")
+    add_p("21/21 story points completed.", bold_prefix="Sprint result: ")
+
+    add_h2("10.7 Sprint Retrospective")
+    add_p("At the conclusion of each sprint, formal retrospectives evaluated process efficiency, engineering hygiene, and security practices:")
+    p10_retrospective = [
+        ["Area", "Observation", "Improvement / Action"],
+        ["What went well", "Security controls were integrated alongside core functionality.", "Continue security-first implementation."],
+        ["What went well", "Automated testing provided continuous verification.", "Maintain regression tests for every security-sensitive feature."],
+        ["What went well", "Both sprint commitments were completed.", "Continue using realistic story-point estimates."],
+        ["What could improve", "Documentation and diagrams required repeated consistency checks.", "Update traceability and diagrams immediately when architecture changes."],
+        ["What could improve", "Evidence collection was concentrated toward the end.", "Capture implementation and testing evidence immediately after each task."],
+        ["What could improve", "Some security requirements required clarification during implementation.", "Refine acceptance criteria before sprint execution."]
+    ]
+    add_table_data([Inches(1.5), Inches(2.5), Inches(2.5)], p10_retrospective[0], p10_retrospective[1:])
+
+    add_h2("10.8 Retrospective Action Items")
+    add_p("The team committed to the following continuous improvement actions for subsequent engineering milestones:")
+    add_bullet(" Maintain the requirements → design → implementation → test → evidence traceability continuously.", bold_prefix="1. ")
+    add_bullet(" Capture screenshots and test evidence immediately after completing each sprint item.", bold_prefix="2. ")
+    add_bullet(" Keep security regression tests alongside security-sensitive implementation changes.", bold_prefix="3. ")
+    add_bullet(" Validate architecture and threat-model consistency whenever a security control changes.", bold_prefix="4. ")
 
     doc.add_page_break()
 
@@ -1190,17 +1255,23 @@ def create_document():
     primary_filename = "CTI_Sharing_Platform_Phase_01_to_10.docx"
     updated_filename = "CTI_Sharing_Platform_Phase_01_to_10_Updated.docx"
     
-    # Save the updated academic black-and-white version
-    doc.save(updated_filename)
-    print(f"Successfully generated updated academic B&W document: {updated_filename} ({os.path.getsize(updated_filename)} bytes)")
-
+    saved_primary = False
     try:
         doc.save(primary_filename)
         print(f"Successfully updated primary document: {primary_filename} ({os.path.getsize(primary_filename)} bytes)")
+        saved_primary = True
     except PermissionError:
         print(f"Notice: '{primary_filename}' is currently held open in Microsoft Word by the user.")
-        print(f"The standard black-and-white academic report is saved and ready at:")
-        print(f"  -> {os.path.abspath(updated_filename)}")
+
+    try:
+        doc.save(updated_filename)
+        print(f"Successfully generated updated academic B&W document: {updated_filename} ({os.path.getsize(updated_filename)} bytes)")
+    except PermissionError:
+        print(f"Notice: '{updated_filename}' is currently held open in Microsoft Word by the user.")
+        if not saved_primary:
+            fallback_filename = "CTI_Sharing_Platform_Phase_01_to_10_New.docx"
+            doc.save(fallback_filename)
+            print(f"Saved to fallback document: {fallback_filename} ({os.path.getsize(fallback_filename)} bytes)")
 
 if __name__ == '__main__':
     create_document()
