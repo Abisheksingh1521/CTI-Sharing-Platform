@@ -86,7 +86,31 @@ def verify_docx(filename):
         assert fb not in full_text.lower(), f"Forbidden terminology '{fb}' found in document!"
     print("6. Zero forbidden terminology detected ('blockchain', 'non-repudiation', 'non-forgeable').")
 
+    # Requirement 7: Check text colors across all paragraphs and tables
+    non_black_runs = []
+    for p in doc.paragraphs:
+        for r in p.runs:
+            if r.font.color and r.font.color.rgb:
+                rgb_hex = str(r.font.color.rgb)
+                if rgb_hex != "000000":
+                    non_black_runs.append((r.text[:30], rgb_hex))
+
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    for r in p.runs:
+                        if r.font.color and r.font.color.rgb:
+                            rgb_hex = str(r.font.color.rgb)
+                            if rgb_hex != "000000":
+                                non_black_runs.append((r.text[:30], rgb_hex))
+
+    print(f"7. Non-black text runs count: {len(non_black_runs)}")
+    assert len(non_black_runs) == 0, f"Found non-black text runs: {non_black_runs[:5]}"
+    print("   -> All explicit font colors are 100% pure black (#000000).")
+
     print("\nALL VERIFICATION CHECKS PASSED PERFECTLY!")
 
 if __name__ == '__main__':
     verify_docx("CTI_Sharing_Platform_Phase_01_to_10.docx")
+    verify_docx("CTI_Sharing_Platform_Phase_01_to_10_Updated.docx")
