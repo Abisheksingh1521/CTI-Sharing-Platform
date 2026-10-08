@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+
+# Environment and secrets (Phase 11 Secret Management)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# SQLite Database & Storage (Writable volume files)
+/data/
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.db
+
+# Logs and runtime data
+logs/
+*.log
+npm-debug.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
