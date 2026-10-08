@@ -132,45 +132,54 @@ The database runs in WAL mode with enforced foreign keys (`PRAGMA foreign_keys =
 ## 6. Traffic Light Protocol (TLP) Authorization Rules
 
 Access is governed strictly by the explicit policy function:
-`canAccessTLP(user, resourceTLP, resourceOrgId)`
+`canAccessTLP(user, indicator)` in `src/middleware/tlpGuard.js`.
 
 * **`TLP:CLEAR` (formerly WHITE):**  
   * *Rule:* Open to all authenticated users (`ROLE_CONSUMER`, `ROLE_CONTRIBUTOR`, `ROLE_ANALYST`, `ROLE_ADMIN`). May be shared publicly.
 * **`TLP:GREEN`:**  
-  * *Rule:* Accessible to all verified member organizations within the sharing community. Accessible by all roles except untrusted anonymous callers.
+  * *Rule:* Accessible to all verified member organizations within the sharing community (`user.trust_level !== 'PROBATIONARY'`). Accessible by all authenticated roles.
 * **`TLP:AMBER`:**  
-  * *Rule:* Accessible only to users belonging to the originating organization (`user.org_id === resourceOrgId`), vetted security analysts (`ROLE_ANALYST`), and platform administrators (`ROLE_ADMIN`). Standard external consumers (`ROLE_CONSUMER`) are denied.
+  * *Rule:* Restricted to users belonging to the originating submitting organization (`user.org_id === indicator.org_id`), vetted security analysts (`ROLE_ANALYST`), and platform administrators (`ROLE_ADMIN`). Standard external consumers (`ROLE_CONSUMER`) are strictly denied.
 * **`TLP:RED`:**  
-  * *Rule:* Strictly confidential. Accessible ONLY to users within the originating organization and authorized Senior Analysts (`ROLE_ANALYST`) or Administrators (`ROLE_ADMIN`). General consumers (`ROLE_CONSUMER`) and external contributors receive an access denial (HTTP 403) or filtered omission.
+  * *Rule:* Strictly confidential. Accessible ONLY to originating organization contributors (`ROLE_CONTRIBUTOR` with `user.org_id === indicator.org_id`) and authorized Senior Analysts (`ROLE_ANALYST`) or Administrators (`ROLE_ADMIN`). General consumers (`ROLE_CONSUMER`) are strictly prohibited and NEVER receive TLP:RED in feeds.
 
 ---
 
-## 7. Audit Integrity: Tamper-Evident SHA-256 Hash-Chained Audit Log
+## 7. IoC Deduplication Policy
+* When a submitted observable `(type, value)` matches an existing active record in the database, the system executes **IoC Deduplication**:
+  * Prevents duplicate database row creation.
+  * Preserves existing triage status and original contributor attribution.
+  * Records an `IOC_DUPLICATE_SIGHTING` event in the audit log for historical correlation.
+  * Returns HTTP 200 with `{ isDuplicate: true, indicatorId: existing.id }`.
+
+---
+
+## 8. Audit Integrity: Tamper-Evident SHA-256 Hash-Chained Audit Log
 
 * Every audit entry computes:
   $$\text{current\_record\_hash} = \text{SHA256}(\text{prev\_record\_hash} \parallel \text{user\_id} \parallel \text{event\_type} \parallel \text{action\_details} \parallel \text{timestamp})$$
 * The first record anchors to a known Genesis Hash (`0000000000000000000000000000000000000000000000000000000000000000`).
-* **Security Purpose:** Provides demonstrable **tamper detection** and **audit trail integrity**. Any out-of-band database update (row insertion, deletion, or modification) invalidates the continuous hash chain and is immediately flagged by the integrity verification routine.
+* **Security Purpose:** The hash chain provides tamper-evident integrity verification of audit records. Any out-of-band database update (row insertion, deletion, or modification) invalidates the continuous hash chain and is immediately flagged by the integrity verification routine.
 
 ---
 
-## 8. Standardized Jira Scrum Backlog
+## 9. Standardized Jira Scrum Backlog & Actual Issue Key Mapping
 
 **Project:** Cyber Threat Intelligence Sharing Platform  
 **Total Story Points:** 44 SP (Sprint 1: 23 SP, Sprint 2: 21 SP)
 
-| Story ID | Summary | Epic | Priority | Story Points | Sprint |
-| :---: | :--- | :--- | :---: | :---: | :---: |
-| **CTI-101** | User Authentication & TOTP MFA | EP01: Identity & Access | Highest | 5 SP | Sprint 1 |
-| **CTI-102** | RBAC Authorization | EP01: Identity & Access | Highest | 3 SP | Sprint 1 |
-| **CTI-103** | IoC Ingestion API | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 |
-| **CTI-104** | IoC Validation & Defanging | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 |
-| **CTI-105** | Threat Report Submission | EP02: Ingestion & Parsing | High | 5 SP | Sprint 1 |
-| **CTI-106** | Analyst Triage | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 |
-| **CTI-107** | TLP Classification & Access Control | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 |
-| **CTI-108** | STIX 2.1 Feed | EP04: Threat Dissemination | High | 3 SP | Sprint 2 |
-| **CTI-109** | Tamper-Evident Audit Trail | EP05: Security Governance | High | 5 SP | Sprint 2 |
-| **CTI-110** | Security Metrics & Monitoring | EP05: Security Governance | Medium | 3 SP | Sprint 2 |
+| Logical Story ID | Actual Jira Key | Summary | Epic | Priority | Story Points | Sprint | Status |
+| :---: | :---: | :--- | :--- | :---: | :---: | :---: | :---: |
+| **CTI-101** | `CTI-1` | User Authentication & TOTP MFA | EP01: Identity & Access | Highest | 5 SP | Sprint 1 | DONE |
+| **CTI-102** | `CTI-2` | RBAC Authorization | EP01: Identity & Access | Highest | 3 SP | Sprint 1 | DONE |
+| **CTI-103** | `CTI-5` | IoC Ingestion API | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 | DONE |
+| **CTI-104** | `CTI-6` | IoC Validation & Defanging | EP02: Ingestion & Parsing | Highest | 5 SP | Sprint 1 | DONE |
+| **CTI-105** | `CTI-7` | Threat Report Submission | EP02: Ingestion & Parsing | High | 5 SP | Sprint 1 | DONE |
+| **CTI-106** | `CTI-8` | Analyst Triage | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 | DONE |
+| **CTI-107** | `CTI-9` | TLP Classification & Access Control | EP03: Triage & Classification | Highest | 5 SP | Sprint 2 | DONE |
+| **CTI-108** | `CTI-10` | STIX 2.1 Feed | EP04: Threat Dissemination | High | 3 SP | Sprint 2 | DONE |
+| **CTI-109** | `CTI-11` | Tamper-Evident Audit Trail | EP05: Security Governance | High | 5 SP | Sprint 2 | IN PROGRESS |
+| **CTI-110** | `CTI-12` | Security Metrics & Monitoring | EP05: Security Governance | Medium | 3 SP | Sprint 2 | TO DO |
 
 ---
 

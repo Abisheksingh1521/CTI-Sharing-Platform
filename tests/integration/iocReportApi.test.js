@@ -13,6 +13,9 @@ describe('Integration Tests: IoC Ingestion & Threat Reports (CTI-103, CTI-104, C
     process.env.NODE_ENV = 'test';
     await initDatabase();
 
+    const { dbRun } = require('../../src/config/database');
+    await dbRun("DELETE FROM threat_indicators WHERE value IN ('203.0.113.195', 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');");
+
     // 1. Authenticate Contributor
     const contribLogin = await request(app)
       .post('/api/auth/login')

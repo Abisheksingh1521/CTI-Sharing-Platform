@@ -1,0 +1,35 @@
+=== CTI PLATFORM ANALYST TRIAGE & STIX 2.1 THREAT FEED TESTS ===
+Date: 2026-10-08
+Command: npm test
+Supported Stories: CTI-106 (Analyst Triage), CTI-107 (TLP Classification & Access Control), CTI-108 (STIX 2.1 Feed)
+
+TAP version 13
+# Subtest: Integration Tests: Analyst Triage & STIX 2.1 Feed Distribution (CTI-106, CTI-107, CTI-108)
+    ok 1 - GET /api/triage/pending rejects Contributor and Consumer with 403 Forbidden (RBAC)
+    ok 2 - GET /api/triage/pending allows Analyst and returns pending queue
+    ok 3 - PUT /api/iocs/:id/triage rejects non-analysts with 403 Forbidden
+    ok 4 - PUT /api/iocs/:id/triage rejects missing justification with 400 Bad Request
+    ok 5 - PUT /api/iocs/:id/triage approves GREEN indicator and writes review log
+    ok 6 - PUT /api/iocs/:id/triage approves RED indicator
+    ok 7 - GET /api/feeds/stix enforces server-side TLP separation: Consumer receives GREEN, NEVER RED
+    ok 8 - GET /api/feeds/stix allows Analyst to receive classified TLP:RED indicators
+    1..8
+ok 3 - Integration Tests: Analyst Triage & STIX 2.1 Feed Distribution (CTI-106, CTI-107, CTI-108)
+
+# Subtest: Unit Tests: Explicit canAccessTLP Authorization Policy (CTI-107)
+    ok 1 - Case 1: Permitted CLEAR access - open to all authenticated roles
+    ok 2 - Case 2: Permitted GREEN access - open to verified community organizations
+    ok 3 - Case 3: Permitted AMBER access - allowed for originating org, analysts, and admins
+    ok 4 - Case 4: Denied AMBER access for unauthorized consumer from external organization
+    ok 5 - Case 5: Permitted RED access - strictly allowed for submitting org and authorized analysts/admins
+    ok 6 - Case 6: Denied RED access for unauthorized consumer and external contributors
+    1..6
+ok 6 - Unit Tests: Explicit canAccessTLP Authorization Policy (CTI-107)
+
+===========================================
+TOTAL TEST SUITES: 7
+TOTAL TESTS: 44
+PASSED: 44
+FAILED: 0
+DURATION: 1.56s
+===========================================

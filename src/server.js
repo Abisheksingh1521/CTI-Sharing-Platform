@@ -11,6 +11,8 @@ const { rbacGuard } = require('./middleware/rbacGuard');
 const AuthController = require('./controllers/authController');
 const IoCController = require('./controllers/iocController');
 const ReportController = require('./controllers/reportController');
+const TriageController = require('./controllers/triageController');
+const FeedController = require('./controllers/feedController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -64,6 +66,14 @@ app.get('/api/iocs/:id', authGuard, IoCController.getIoCById);
 app.post('/api/reports', authGuard, rbacGuard(['ROLE_CONTRIBUTOR', 'ROLE_ANALYST', 'ROLE_ADMIN']), ReportController.submitReport);
 app.get('/api/reports', authGuard, ReportController.getReports);
 app.get('/api/reports/:id', authGuard, ReportController.getReportById);
+
+// Analyst Triage Workbench Routes (CTI-106, CTI-107)
+app.get('/api/triage/pending', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN']), TriageController.getPendingQueue);
+app.put('/api/iocs/:id/triage', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN']), TriageController.triageIoC);
+
+// STIX 2.1 Threat Feeds & Blocklist Routes (CTI-108)
+app.get('/api/feeds/stix', authGuard, FeedController.getSTIXFeed);
+app.get('/api/feeds/blocklist', authGuard, FeedController.getFirewallBlocklist);
 
 // RBAC Role Verification Test Endpoints
 app.get('/api/test/analyst-only', authGuard, rbacGuard(['ROLE_ANALYST', 'ROLE_ADMIN']), (req, res) => {
