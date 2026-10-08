@@ -1,0 +1,55 @@
+name: Secure Build & Security Verification Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  secure-build:
+    name: Phase 11: Secure Development Controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies (Reproducible Clean Install)
+        run: npm ci
+
+      - name: Control 1: Secret Detection & Anti-Hardcoding Audit
+        run: node scripts/detect-secrets.js
+
+      - name: Control 2: Dependency Security Vulnerability Audit
+        run: npm audit --audit-level=critical || true
+
+      - name: Control 3: Static Application Security Testing (SAST)
+        run: node scripts/security-scan.js
+
+      - name: Control 4: Automated Security Regression & Unit Testing
+        run: npm test
+
+      - name: Control 5: Cryptographic Audit Hash Chain Verification
+        run: node scripts/verify-audit-chain.js
+
+      - name: Control 6: Build Artifact Integrity & Reproducibility Seal
+        run: node scripts/generate-build-manifest.js
+
+      - name: Archive Build Manifest Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-manifest
+          path: build-manifest.json

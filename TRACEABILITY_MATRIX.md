@@ -53,4 +53,21 @@ The table below connects demonstrated weaknesses to their reproduction tests and
 *Detailed Evidence Document:* [`evidence/M11_VULNERABILITY_DEMONSTRATION.md`](file:///v:/SSE-ENDSEM/evidence/M11_VULNERABILITY_DEMONSTRATION.md)  
 *Raw Test Run Log:* [`evidence/p11_vulnerability_tests.txt`](file:///v:/SSE-ENDSEM/evidence/p11_vulnerability_tests.txt)
 
+---
+
+## 4. Phase 11: Secure Development and Build Controls Traceability
+
+The table below connects the Phase 11 secure development controls to governance standards, implementation scripts, and verifiable test evidence:
+
+| Control ID | Control Name | Governance Standard | Implementation Script / Configuration | Verification Command | Evidence Reference |
+| :---: | :--- | :--- | :--- | :--- | :--- |
+| **`CTRL-11-01`** | **Secret Management & Anti-Hardcoding** | NIST SP 800-218 PW.4 / CWE-798 | `scripts/detect-secrets.js` & `.gitignore` | `node scripts/detect-secrets.js` | Section 2.1 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-02`** | **Dependency Security Auditing** | NIST SP 800-218 PW.3 / SLSA v0.2 | `package-lock.json` & `npm audit` | `npm audit --json` | Section 4 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-03`** | **Static Application Security Testing** | NIST SP 800-218 PW.7 / OWASP A03 | `scripts/security-scan.js` | `npm run security:scan` | Section 3 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-04`** | **Security Regression Suite** | NIST SP 800-218 RV.1 | `tests/unit/*.js` & `tests/integration/*.js` | `npm test` (53 tests pass) | Section 5 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-05`** | **Cryptographic Audit Integrity** | NIST SP 800-218 PO.3 / CWE-778 | `scripts/verify-audit-chain.js` | `npm run audit:verify` | Section 6 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-06`** | **Reproducible Build Manifest** | SLSA Level 2 / NIST SP 800-218 PW.8 | `scripts/generate-build-manifest.js` | `node scripts/generate-build-manifest.js` | Section 7 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+| **`CTRL-11-07`** | **Continuous Integration Pipeline** | NIST SP 800-218 PW.6 / GitHub CI | `scripts/ci-runner.js` & `.github/workflows/`| `npm run ci` | Section 8 in `PHASE_11_SECURE_BUILD_EVIDENCE.md` |
+
+
 
