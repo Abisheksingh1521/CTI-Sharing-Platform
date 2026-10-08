@@ -385,11 +385,13 @@ class CTIApp {
       return;
     }
 
+    const markdownVal = document.getElementById('report-markdown').value.trim();
     const payload = {
       title: document.getElementById('report-title').value.trim(),
       summary: document.getElementById('report-summary').value.trim(),
       tlp: document.getElementById('report-tlp').value,
-      content_markdown: document.getElementById('report-markdown').value.trim()
+      contentMarkdown: markdownVal,
+      content_markdown: markdownVal
     };
 
     try {
@@ -408,9 +410,10 @@ class CTIApp {
         throw new Error(data.message || 'Report submission failed');
       }
 
+      const repId = (data.report && data.report.id) || data.reportId || 'saved';
       this.showAlert(
         this.reportAlert,
-        `Threat Report Persisted! ID: ${data.reportId}. Raw scripts stripped via server-side Stored XSS defense.`,
+        `Threat Report Persisted! ID: ${repId}. Notice: Naive regex only removed <script> tags; HTML5 event handlers remain stored in DB (V04).`,
         'success'
       );
       document.getElementById('report-title').value = '';
